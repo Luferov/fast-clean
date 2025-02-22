@@ -1,0 +1,134 @@
+default_language_version:
+  python: python3.12
+
+repos:
+  # general checks (see here: https://pre-commit.com/hooks.html)
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+        args: [ --allow-multiple-documents ]
+      - id: trailing-whitespace
+      - id: check-case-conflict
+      - id: check-symlinks
+
+  # black - formatting
+  - repo: https://github.com/psf/black
+    rev: 25.1.0
+    hooks:
+      - id: black
+        name: black
+        args:
+          - "--config"
+          - "./pyproject.toml"
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.7
+    hooks:
+      - id: ruff
+        args: [ --fix, --exit-non-zero-on-fix ]
+        types_or: [ python, pyi, jupyter ]
+        stages: [ pre-commit ]
+
+  # mypy - lint-like type checking
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.15.0
+    hooks:
+      - id: mypy
+        args: [ "--ignore-missing-imports", "--scripts-are-modules" ]
+        additional_dependencies:
+          - pydantic
+          - types-DateTimeRange
+          - types-Deprecated
+          - types-Flask
+          - types-JACK-Client
+          - types-Jinja2
+          - types-Markdown
+          - types-MarkupSafe
+          - types-Pillow
+          - types-PyJWT
+          - types-PyMySQL
+          - types-PyYAML
+          - types-Routes
+          - types-Werkzeug
+          - types-aiofiles
+          - types-annoy
+          - types-atomicwrites
+          - types-backports
+          - types-backports-abc
+          - types-bleach
+          - types-boto
+          - types-cachetools
+          - types-certifi
+          - types-characteristic
+          - types-chardet
+          - types-click
+          - types-click-spinner
+          - types-colorama
+          - types-contextvars
+          - types-croniter
+          - types-cryptography
+          - types-dataclasses
+          - types-dateparser
+          - types-decorator
+          - types-docopt
+          - types-docutils
+          - types-emoji
+          - types-enum34
+          - types-fb303
+          - types-filelock
+          - types-first
+          - types-freezegun
+          - types-frozendict
+          - types-futures
+          - types-geoip2
+          - types-ipaddress
+          - types-itsdangerous
+          - types-kazoo
+          - types-maxminddb
+          - types-mock
+          - types-mypy-extensions
+          - types-nmap
+          - types-openssl-python
+          - types-orjson
+          - types-paramiko
+          - types-pathlib2
+          - types-setuptools
+          - types-polib
+          - types-protobuf
+          - types-pyRFC3339
+          - types-pyaudio
+          - types-pycurl
+          - types-pyfarmhash
+          - types-pymssql
+          - types-pysftp
+          - types-python-dateutil
+          - types-python-gflags
+          - types-python-slugify
+          - types-pytz
+          - types-pyvmomi
+          - types-redis
+          - types-requests
+          - types-retry
+          - types-scribe
+          - types-simplejson
+          - types-singledispatch
+          - types-six
+          - types-tabulate
+          - types-termcolor
+          - types-toml
+          - types-tornado
+          - types-typed-ast
+          - types-tzlocal
+          - types-ujson
+          - types-waitress
+          - types-xxhash
+
+  - repo: local
+    hooks:
+    -   id: pytest
+        name: Check pytest with coverage passes
+        entry: uv run pytest --cov-report html --cov=fast_clean tests
+        pass_filenames: false
+        language: system
+        types: [python]

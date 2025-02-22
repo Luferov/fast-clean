@@ -1,0 +1,79 @@
+services:
+  postgres:
+    container_name: voiceai-core-postgres
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "test"
+    ports:
+      - "5432:5432"
+    healthcheck:
+      interval: 10s
+      retries: 10
+      timeout: 5s
+      test: "pg_isready -U postgres"
+
+  minio:
+    container_name: voiceai-core-minio
+    image: minio/minio
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: "admin"
+      MINIO_ROOT_PASSWORD: "12345678"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+
+  redis:
+    container_name: voiceai-core-redis
+    image: redis:latest
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+
+  zookeeper:
+    container_name: voiceai-core-zookeeper
+    image: confluentinc/cp-zookeeper:7.4.0
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    healthcheck:
+      interval: 10s
+      test: nc -z localhost 2181 || exit -1
+
+  kafka:
+    container_name: voiceai-core-kafka
+    image: confluentinc/cp-kafka:7.4.0
+    restart: unless-stopped
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+      KAFKA_MESSAGE_MAX_BYTES: 2000000
+    ports:
+      - "29092:29092"
+      - "9101:9101"
+    healthcheck:
+      interval: 10s
+      test: kafka-topics --bootstrap-server kafka:9092 --list

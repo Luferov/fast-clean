@@ -1,0 +1,29 @@
+[
+  {
+    "model": "tests.services.models.SeedChildModel",
+    "id": "20e21c15-ae54-4b00-bb1f-405dc96bde7e",
+    "fields": {
+      "str_column": "child_model0",
+      "int_column": 3,
+      "parent_id": "8b32108a-42bb-4a46-9113-4b4fab87ee4d"
+    }
+  },
+  {
+    "model": "tests.services.models.SeedChildModel",
+    "id": "d0dc2ed5-5a97-40f1-8baf-66a49ed22051",
+    "fields": {
+      "str_column": "child_model1",
+      "int_column": 4,
+      "parent_id": "ea92844d-ee93-4708-a759-d5278acadbe9"
+    }
+  },
+  {
+    "model": "tests.services.models.SeedChildModel",
+    "id": "a9989714-141e-4da3-8065-2accb17438e8",
+    "fields": {
+      "str_column": "child_model2",
+      "int_column": 5,
+      "parent_id": "ea92844d-ee93-4708-a759-d5278acadbe9"
+    }
+  }
+]

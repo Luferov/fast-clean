@@ -1,0 +1,106 @@
+[project]
+name = "fast-clean"
+version = "0.1.0"
+description = "FastAPI Clean Architecture implementation"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    {name = "Luferov Victor", email = "luferovvs@yandex.ru"},
+    {name = "Orlov Artem", email = "squakrazv@yandex.ru"},
+]
+dependencies = [
+    "aiofiles>=24.1.0",
+    "aiokafka>=0.12.0",
+    "cryptography>=44.0.1",
+    "fastapi>=0.115.8",
+    "fastapi-cache2[redis]>=0.2.2",
+    "faststream>=0.5.34",
+    "flatten-dict>=0.4.2",
+    "miniopy-async>=1.21.1",
+    "overrides>=7.7.0",
+    "psycopg>=3.2.4",
+    "pydantic>=2.10.6",
+    "pydantic-settings>=2.8.0",
+    "pyyaml>=6.0.2",
+    "sqlalchemy-utils>=0.41.2",
+    "sqlalchemy[asyncio]>=2.0.38",
+    "stringcase>=1.2.0",
+    "typer>=0.15.1",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "docformatter>=1.7.5",
+    "mypy>=1.15.0",
+    "pre-commit>=4.1.0",
+    "pytest>=8.3.4",
+    "pytest-asyncio>=0.25.3",
+    "pytest-cov>=6.0.0",
+    "pytest-env>=1.1.5",
+    "pytest-mock>=3.14.0",
+    "pytest-sugar>=1.0.0",
+    "pytest-xdist>=3.6.1",
+    "ruff>=0.9.7",
+]
+
+
+[tool.black]
+skip-string-normalization = true
+line-length = 120
+
+[tool.ruff]
+line-length = 120
+lint.extend-select = ["Q"]
+
+lint.select = [
+    "E", # pycodestyle errors (settings from FastAPI, thanks, @tiangolo!)
+    "W", # pycodestyle warnings
+    "F", # pyflakes
+    "I", # isort
+    "C", # flake8-comprehensions
+    "B", # flake8-bugbear
+]
+lint.ignore = [
+    "E501", # line too long, handled by black
+    "C901", # too complex
+]
+
+src = ["fast_clean", "tests"]
+exclude = [".venv", ".git", "__pycache__", "build", "dist", "venv"]
+
+target-version = "py311"
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "single"
+
+[tool.ruff.lint.isort]
+order-by-type = true
+relative-imports-order = "closest-to-furthest"
+extra-standard-library = ["typing"]
+section-order = [
+    "future",
+    "standard-library",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
+known-first-party = []
+
+[tool.pytest.ini_options]
+addopts = "-vvv"
+testpaths = "tests"
+
+[tool.mypy]
+files = ["fast_clean", "tests"]
+disable_error_code = "import-untyped"
+strict_optional = false
+
+[tool.semantic_release]
+version_toml = [
+    "pyproject.toml:project.version"
+]
+commit_message = "chore(release): {version} [skip ci]"
+branch = "main"
+upload_to_pypi = false
+upload_to_release = true

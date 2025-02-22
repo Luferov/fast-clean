@@ -1,0 +1,26 @@
+[
+  {
+    "model": "tests.services.models.SeedParentModel",
+    "id": "81dbc51b-59a8-4f14-ad89-0d5db95df063",
+    "fields": {
+      "str_column": "parent_model0",
+      "int_column": 0
+    }
+  },
+  {
+    "model": "tests.services.models.SeedParentModel",
+    "id": "8b32108a-42bb-4a46-9113-4b4fab87ee4d",
+    "fields": {
+      "str_column": "parent_model1",
+      "int_column": 1
+    }
+  },
+  {
+    "model": "tests.services.models.SeedParentModel",
+    "id": "ea92844d-ee93-4708-a759-d5278acadbe9",
+    "fields": {
+      "str_column": "parent_model2",
+      "int_column": 2
+    }
+  }
+]
