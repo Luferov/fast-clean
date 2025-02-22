@@ -8,7 +8,7 @@ from typing import Protocol, Self
 from aiofiles.threadpool.binary import AsyncBufferedReader
 from aiohttp import ClientResponse
 
-READ_SIZE = 1024
+READ_SIZE = 5 * 1024 * 1024
 
 
 class StreamReadSyncProtocol(Protocol):
