@@ -100,7 +100,7 @@ strict_optional = false
 version_toml = [
     "pyproject.toml:project.version"
 ]
-commit_message = "chore(release): {version} [skip ci]"
+# commit_message = "chore(release): {version} [skip ci]"
 branch = "main"
 upload_to_pypi = false
 upload_to_release = true
