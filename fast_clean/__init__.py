@@ -1,3 +1,3 @@
 """
-Библиотека ядра VoiceAI solution.
+FastAPI clean architecture implementation.
 """

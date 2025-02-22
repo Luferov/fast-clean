@@ -171,7 +171,7 @@ async def get_storage_repository(
             StorageTypeEnum.S3,
             S3StorageParamsSchema.model_validate(storage_settings.s3.model_dump()),
         )
-    elif storage_settings.provider == 'local' and storage_settings.dir is not None:
+    elif storage_settings.provider == 'local':
         return await storage_repository_factory.make(
             StorageTypeEnum.LOCAL, LocalStorageParamsSchema(path=storage_settings.dir)
         )
