@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.1.1 (2025-02-22)
+
+### Bug Fixes
+
+- Remove useless code
+  ([`6cc3ca3`](https://github.com/Luferov/fast-clean/commit/6cc3ca3c74eb2975f18d2f9a0a7fa782cfcd3d93))
+
+
 ## v0.1.0 (2025-02-22)
 
 ### Features
@@ -10,8 +18,3 @@
 
 
 ## v0.0.0 (2025-02-22)
-
-### Chores
-
-- **release**: 0.0.0 [skip ci]
-  ([`bedc0ba`](https://github.com/Luferov/fast-clean/commit/bedc0ba02be665beec1232b5ac25e095dd54543a))
