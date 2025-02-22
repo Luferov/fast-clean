@@ -126,7 +126,7 @@ class CoreKafkaSettingsSchema(BaseModel):
             case 'SASL':
                 for field in ('broker_username', 'broker_password'):
                     assert bool(getattr(self, field)), f'{field} must be set when credentials={self.credentials}'
-            case None:
+            case _:
                 ...
         return self
 
