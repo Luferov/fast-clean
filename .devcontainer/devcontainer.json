@@ -11,6 +11,10 @@
 		"ghcr.io/dhoeric/features/act:1": {}
 	},
 	"postCreateCommand": "uv sync --all-extras --dev",
+	"mounts": [
+		"source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+		"source=${localEnv:HOME}${localEnv:USERPROFILE:/},target=/home/vscode,type=bind,consistency=cached"
+	],
 	"customizations": {
 		"vscode": {
 			"settings": {
