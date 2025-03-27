@@ -1,6 +1,19 @@
 # CHANGELOG
 
 
+## v0.1.4 (2025-03-27)
+
+### Bug Fixes
+
+- Ci
+  ([`bc05120`](https://github.com/Luferov/fast-clean/commit/bc0512030f5cd65df703612f392101e8fca3f02e))
+
+### Chores
+
+- Semantic in ci
+  ([`1f18468`](https://github.com/Luferov/fast-clean/commit/1f18468259adec0a35dddc0553ed83f1e9b43fd2))
+
+
 ## v0.1.3 (2025-02-23)
 
 
