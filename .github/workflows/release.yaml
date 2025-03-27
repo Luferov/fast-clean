@@ -47,8 +47,12 @@ jobs:
       - name: Install the project
         run: uv sync --all-extras --dev
       - name: Semantic Release
+        id: semantic
         uses: relekang/python-semantic-release@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build & Publish
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: uv build && uv publish
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
