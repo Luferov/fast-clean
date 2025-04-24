@@ -52,7 +52,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Build & Publish
-        if: steps.semantic.outputs.new_release_published == 'true'
+        if: steps.semantic.outputs.released == 'true'
         run: uv build && uv publish
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
