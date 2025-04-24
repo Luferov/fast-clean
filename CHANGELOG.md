@@ -1,6 +1,27 @@
 # CHANGELOG
 
 
+## v0.3.0 (2025-04-24)
+
+### Features
+
+- Add .gitconfig, fix semantic release
+  ([`2b72c89`](https://github.com/Luferov/fast-clean/commit/2b72c891a1693a34ea22e4a77b66a3f31d810561))
+
+
+## v0.2.0 (2025-04-24)
+
+### Chores
+
+- Mount only ssh folder
+  ([`e0363c5`](https://github.com/Luferov/fast-clean/commit/e0363c585c93650f96bdf126453c2ebb1bef6172))
+
+### Features
+
+- Add endpoint_url
+  ([`7a2d044`](https://github.com/Luferov/fast-clean/commit/7a2d0442a952c77450511e280b837e901dfbb003))
+
+
 ## v0.1.4 (2025-03-27)
 
 ### Bug Fixes
