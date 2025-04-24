@@ -53,6 +53,7 @@ class CoreS3SettingsSchema(BaseModel):
     """
 
     endpoint: str
+    endpoint_url: str
     access_key: str
     secret_key: str
     port: int
