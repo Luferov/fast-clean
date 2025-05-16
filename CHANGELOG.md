@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.4.0 (2025-05-16)
+
+### Features
+
+- Add py.typed mark
+  ([`7fbd8cc`](https://github.com/Luferov/fast-clean/commit/7fbd8ccb710f8b52efdc1af6e3763e48756ed679))
+
+
 ## v0.3.0 (2025-04-24)
 
 ### Features
