@@ -44,6 +44,8 @@ dev = [
     "ruff>=0.9.7",
 ]
 
+[tool.ruff.format]
+quote-style = "single"
 
 [tool.black]
 skip-string-normalization = true

@@ -2,7 +2,7 @@
 Модуль, содержащий тесты сервиса транзакций.
 """
 
-from fast_clean.services.transaction import TransactionServiceImpl
+from fast_clean.services.transaction import TransactionService
 
 
 class TestTransactionService:
@@ -11,7 +11,7 @@ class TestTransactionService:
     """
 
     @staticmethod
-    async def test_begin(transaction_service: TransactionServiceImpl) -> None:
+    async def test_begin(transaction_service: TransactionService) -> None:
         """
         Тестируем метод `begin`.
         """

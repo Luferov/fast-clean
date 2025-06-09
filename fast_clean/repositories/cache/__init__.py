@@ -6,7 +6,7 @@
 - Redis
 """
 
-from typing import ClassVar, Protocol, Self, Tuple, cast
+from typing import ClassVar, Protocol, Self, cast
 
 from fastapi_cache import FastAPICache
 
@@ -34,7 +34,7 @@ class CacheRepositoryProtocol(Protocol):
         """
         ...
 
-    async def get_with_ttl(self: Self, key: str) -> Tuple[int, str | None]:
+    async def get_with_ttl(self: Self, key: str) -> tuple[int, str | None]:
         """
         Получаем значение со сроком жизни.
         """
@@ -61,17 +61,17 @@ class CacheRepositoryProtocol(Protocol):
 
 class CacheManager:
     """
-    Менеджер для реализации кеширования.
+    Менеджер для работы с репозиторием кеша.
     """
 
-    cache: ClassVar[CacheRepositoryProtocol | None] = None
+    cache_repository: ClassVar[CacheRepositoryProtocol | None] = None
 
     @classmethod
     def init(cls, cache_settings: CoreCacheSettingsSchema, redis: aioredis.Redis | None) -> None:
         """
         Инициализируем кеш.
         """
-        if cls.cache is None:
+        if cls.cache_repository is None:
             cache_backend: InMemoryCacheRepository | RedisCacheRepository
             match cache_settings.provider:
                 case 'in_memory':
@@ -80,4 +80,4 @@ class CacheManager:
                     assert redis is not None
                     cache_backend = RedisCacheRepository(redis)
             FastAPICache.init(cache_backend, prefix=cache_settings.prefix)
-            cls.cache = cast(CacheRepositoryProtocol, cache_backend)
+            cls.cache_repository = cast(CacheRepositoryProtocol, cache_backend)

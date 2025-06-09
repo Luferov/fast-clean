@@ -4,7 +4,8 @@
 
 from typing import Protocol, Self
 
-from .aes import AesCbcCryptographyService, AesGcmCryptographyService
+from .aes import AesCbcCryptographyService as AesCbcCryptographyService
+from .aes import AesGcmCryptographyService
 from .enums import CryptographicAlgorithmEnum
 
 
@@ -26,21 +27,9 @@ class CryptographyServiceProtocol(Protocol):
         ...
 
 
-class CryptographyServiceFactoryProtocol(Protocol):
+class CryptographyServiceFactory:
     """
-    Протокол фабрики сервисов криптографии для шифрования секретных параметров.
-    """
-
-    async def make(self: Self, algorithm: CryptographicAlgorithmEnum) -> CryptographyServiceProtocol:
-        """
-        Создаем сервис криптографии для шифрования секретных параметров.
-        """
-        ...
-
-
-class CryptographyServiceFactoryImpl:
-    """
-    Реализация фабрики сервисов криптографии для шифрования секретных параметров.
+    Фабрика сервисов криптографии для шифрования секретных параметров.
     """
 
     def __init__(self, secret_key: str) -> None:
@@ -53,5 +42,4 @@ class CryptographyServiceFactoryImpl:
         match algorithm:
             case CryptographicAlgorithmEnum.AES_GCM:
                 return AesGcmCryptographyService(self.secret_key)
-            case CryptographicAlgorithmEnum.AES_CBC:
-                return AesCbcCryptographyService(self.secret_key)
+        raise NotImplementedError(algorithm)

@@ -6,8 +6,8 @@ from typing import Annotated
 
 import typer
 
-from fast_clean.depends import get_container
-from fast_clean.services import SeedServiceProtocol
+from fast_clean.container import get_container
+from fast_clean.services import SeedService
 from fast_clean.utils import typer_async
 
 
@@ -19,7 +19,7 @@ async def load_seed(
     Загружаем данные из файлов.
     """
     async with get_container() as container:
-        seed_service: SeedServiceProtocol = await container.get_by_type(SeedServiceProtocol)
+        seed_service = await container.get(SeedService)
         await seed_service.load_data(path)
 
 

@@ -6,8 +6,8 @@ from typing import Annotated
 
 import typer
 
-from fast_clean.depends import get_container
-from fast_clean.services import CryptographicAlgorithmEnum, CryptographyServiceFactoryProtocol
+from fast_clean.container import get_container
+from fast_clean.services import CryptographicAlgorithmEnum, CryptographyServiceFactory
 from fast_clean.utils import typer_async
 
 
@@ -21,12 +21,10 @@ async def encrypt(
     """
     Зашифровываем данные.
     """
-    container = get_container()
-    cryptography_service_factory: CryptographyServiceFactoryProtocol = await container.get_by_type(
-        CryptographyServiceFactoryProtocol
-    )
-    cryptography_service = await cryptography_service_factory.make(algorithm)
-    print(cryptography_service.encrypt(data))
+    async with get_container() as container:
+        cryptography_service_factory = await container.get(CryptographyServiceFactory)
+        cryptography_service = await cryptography_service_factory.make(algorithm)
+        print(cryptography_service.encrypt(data))
 
 
 @typer_async
@@ -39,12 +37,10 @@ async def decrypt(
     """
     Расшифровываем данные.
     """
-    container = get_container()
-    cryptography_service_factory: CryptographyServiceFactoryProtocol = await container.get_by_type(
-        CryptographyServiceFactoryProtocol
-    )
-    cryptography_service = await cryptography_service_factory.make(algorithm)
-    print(cryptography_service.decrypt(data))
+    async with get_container() as container:
+        cryptography_service_factory = await container.get(CryptographyServiceFactory)
+        cryptography_service = await cryptography_service_factory.make(algorithm)
+        print(cryptography_service.decrypt(data))
 
 
 def use_cryptography(app: typer.Typer) -> None:

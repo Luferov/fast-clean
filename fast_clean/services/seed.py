@@ -6,7 +6,7 @@ import importlib
 import json
 import os
 from pathlib import Path
-from typing import Any, Protocol, Self, cast
+from typing import Any, cast
 
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import insert
@@ -15,19 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..db import SessionManagerProtocol
 
 
-class SeedServiceProtocol(Protocol):
-    """
-    Протокол сервиса для загрузки данных из файлов.
-    """
-
-    async def load_data(self: Self, directory: str | Path | None = None) -> None:
-        """
-        Загружаем данные из файлов по пути.
-        """
-        ...
-
-
-class SeedServiceImpl:
+class SeedService:
     """
     Реализация сервиса для загрузки данных из файлов.
     """
@@ -35,7 +23,7 @@ class SeedServiceImpl:
     def __init__(self, session_manager: SessionManagerProtocol) -> None:
         self.session_manager = session_manager
 
-    async def load_data(self: Self, directory: str | Path | None = None) -> None:
+    async def load_data(self, directory: str | Path | None = None) -> None:
         """
         Загружаем данные из файлов по пути.
         """
