@@ -4,11 +4,11 @@
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import AsyncContextManager, Protocol, Self
+from typing import AsyncContextManager, Protocol
 
+import redis.asyncio.lock as aioredis_lock
 from fast_clean.exceptions import LockError
 from redis import asyncio as aioredis
-from redis.exceptions import LockError as RedisLockError
 
 
 class LockServiceProtocol(Protocol):
@@ -17,7 +17,7 @@ class LockServiceProtocol(Protocol):
     """
 
     def lock(
-        self: Self,
+        self,
         name: str,
         *,
         timeout: float | None = None,
@@ -40,7 +40,7 @@ class RedisLockService:
 
     @asynccontextmanager
     async def lock(
-        self: Self,
+        self,
         name: str,
         *,
         timeout: float | None = None,
@@ -53,5 +53,5 @@ class RedisLockService:
         try:
             async with self.redis.lock(name, timeout=timeout, sleep=sleep, blocking_timeout=blocking_timeout):
                 yield
-        except RedisLockError as lock_error:
+        except aioredis_lock.LockError as lock_error:
             raise LockError() from lock_error

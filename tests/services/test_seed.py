@@ -6,7 +6,7 @@ import uuid
 
 import sqlalchemy as sa
 from fast_clean.db import make_async_session_factory
-from fast_clean.services.seed import SeedServiceProtocol
+from fast_clean.services.seed import SeedService
 from sqlalchemy.orm import selectinload
 
 from tests.settings import SettingsSchema
@@ -62,9 +62,7 @@ class TestSeedService:
     ]
 
     @classmethod
-    async def test_load_data_with_path_and_update(
-        cls, settings: SettingsSchema, seed_service: SeedServiceProtocol
-    ) -> None:
+    async def test_load_data_with_path_and_update(cls, settings: SettingsSchema, seed_service: SeedService) -> None:
         """
         Тестируем метод `load_data` с передачей пути и обновлением созданных моделей.
         """
@@ -77,7 +75,7 @@ class TestSeedService:
         assert await cls.get_actual_models(settings) == cls.EXPECTED_MODELS
 
     @classmethod
-    async def test_load_data_without_path(cls, settings: SettingsSchema, seed_service: SeedServiceProtocol) -> None:
+    async def test_load_data_without_path(cls, settings: SettingsSchema, seed_service: SeedService) -> None:
         """
         Тестируем метод `load_data` с автоматическим поиском пути.
         """

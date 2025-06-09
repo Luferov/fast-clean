@@ -6,10 +6,12 @@ import asyncio
 from asyncio import AbstractEventLoop
 from collections.abc import Iterator
 from pathlib import Path
+from typing import AsyncIterator
 
 import pytest
+from dishka import AsyncContainer
 from dotenv import load_dotenv
-from fast_clean.container import ContainerImpl, ContainerProtocol
+from fast_clean.container import ContainerManager
 from fast_clean.db import SessionManagerImpl, make_async_session_factory
 
 from .settings import SettingsSchema
@@ -57,12 +59,10 @@ async def session_manager(settings: SettingsSchema) -> SessionManagerImpl:
 
 
 @pytest.fixture
-async def container() -> ContainerProtocol:
+async def container() -> AsyncIterator[AsyncContainer]:
     """
     Получаем контейнер зависимостей.
     """
-    container = ContainerImpl()
-    module_names = container.get_default_module_names()
-    module_names.add('tests.depends')
-    container.init(module_names)
-    return container
+    container = ContainerManager.create()
+    async with container() as nested_container:
+        yield nested_container

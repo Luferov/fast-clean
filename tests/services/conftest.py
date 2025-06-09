@@ -12,8 +12,8 @@ from fast_clean.services.cryptography import (
     CryptographyServiceProtocol,
 )
 from fast_clean.services.lock import LockServiceProtocol, RedisLockService
-from fast_clean.services.seed import SeedServiceImpl, SeedServiceProtocol
-from fast_clean.services.transaction import TransactionServiceImpl
+from fast_clean.services.seed import SeedService
+from fast_clean.services.transaction import TransactionService
 
 from redis import asyncio as aioredis
 from tests.settings import SettingsSchema
@@ -42,9 +42,7 @@ def lock_service(settings: SettingsSchema) -> LockServiceProtocol:
 
 
 @pytest.fixture
-async def seed_service(
-    settings: SettingsSchema, session_manager: SessionManagerProtocol
-) -> AsyncIterator[SeedServiceProtocol]:
+async def seed_service(settings: SettingsSchema, session_manager: SessionManagerProtocol) -> AsyncIterator[SeedService]:
     """
     Получаем сервис для загрузки данных из файлов.
     """
@@ -52,16 +50,16 @@ async def seed_service(
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     try:
-        yield SeedServiceImpl(session_manager)
+        yield SeedService(session_manager)
     finally:
         async with async_engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
 
 
 @pytest.fixture
-async def transaction_service(settings: SettingsSchema) -> TransactionServiceImpl:
+async def transaction_service(settings: SettingsSchema) -> TransactionService:
     """
     Получаем сервис транзакций.
     """
     async with make_async_session_factory(settings.db.dsn)() as session:
-        return TransactionServiceImpl(session)
+        return TransactionService(session)

@@ -3,25 +3,13 @@
 """
 
 from contextlib import asynccontextmanager
-from typing import AsyncContextManager, AsyncIterator, Protocol, Self
+from typing import AsyncIterator
 
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-class TransactionServiceProtocol(Protocol):
-    """
-    Протокол сервиса транзакций.
-    """
-
-    def begin(self: Self, immediate: bool = True) -> AsyncContextManager[None]:
-        """
-        Начинаем транзакцию.
-        """
-        ...
-
-
-class TransactionServiceImpl:
+class TransactionService:
     """
     Реализация сервиса транзакций.
     """
@@ -30,7 +18,7 @@ class TransactionServiceImpl:
         self.session = session
 
     @asynccontextmanager
-    async def begin(self: Self, immediate: bool = True) -> AsyncIterator[None]:
+    async def begin(self, immediate: bool = True) -> AsyncIterator[None]:
         """
         Начинаем транзакцию.
         """
