@@ -12,6 +12,7 @@ dependencies = [
     "aiofiles>=24.1.0",
     "aiokafka>=0.12.0",
     "cryptography>=44.0.1",
+    "dishka>=1.6.0",
     "fastapi>=0.115.8",
     "fastapi-cache2[redis]>=0.2.2",
     "faststream>=0.5.34",
