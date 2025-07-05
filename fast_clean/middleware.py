@@ -5,6 +5,8 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+from .contrib.monitoring.middleware import use_middleware as use_monitoring_middleware
+
 
 def use_middleware(app: FastAPI, cors_origins: list[str]) -> FastAPI:
     """
@@ -17,4 +19,5 @@ def use_middleware(app: FastAPI, cors_origins: list[str]) -> FastAPI:
         allow_methods=['*'],
         allow_headers=['*'],
     )
+    use_monitoring_middleware(app)
     return app

@@ -6,9 +6,9 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import ClassVar, Literal, Self
+from typing import Annotated, ClassVar, Literal, Self
 
-from pydantic import BaseModel, ConfigDict, RedisDsn, model_validator
+from pydantic import BaseModel, ConfigDict, Field, RedisDsn, model_validator
 from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
 from typing_extensions import Unpack
@@ -173,12 +173,12 @@ class CoreSettingsSchema(BaseSettingsSchema):
     """
 
     debug: bool
-    title: str
     base_url: str
     base_dir: Path = Path(os.getcwd())
     secret_key: str
-    cors_origins: list[str]
+    cors_origins: Annotated[list[str], Field(default_factory=list)]
     redis_dsn: RedisDsn | None = None
+    sentry_dsn: str | None = None
 
     model_config = SettingsConfigDict(
         env_file='.env',

@@ -4,7 +4,7 @@
 
 from fastapi import APIRouter
 
-from fast_clean.schemas import StatusOkResponseSchema
+from .schemas import StatusOkResponseSchema
 
 router = APIRouter(prefix='/health', tags=['Healthcheck'], include_in_schema=False)
 

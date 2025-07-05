@@ -1,8 +1,5 @@
-"""
-Модуль, содержащий схемы ответов статусов.
-"""
 
-from .request_response import ResponseSchema
+from fast_clean.schemas.request_response import ResponseSchema
 
 
 class StatusOkResponseSchema(ResponseSchema):

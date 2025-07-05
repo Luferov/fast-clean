@@ -42,4 +42,5 @@ class CryptographyServiceFactory:
         match algorithm:
             case CryptographicAlgorithmEnum.AES_GCM:
                 return AesGcmCryptographyService(self.secret_key)
-        raise NotImplementedError(algorithm)
+            case _:
+                 raise NotImplementedError(algorithm)
