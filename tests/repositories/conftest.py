@@ -188,7 +188,7 @@ async def make_s3_storage_repository(
     """
     Создаем репозиторий хранилища S3.
     """
-    minio_client = miniopy_async.Minio(
+    minio_client = miniopy_async.Minio( # type: ignore
         f'{settings.storage.s3.endpoint}:{settings.storage.s3.port}',
         access_key=settings.storage.s3.access_key,
         secret_key=settings.storage.s3.secret_key,

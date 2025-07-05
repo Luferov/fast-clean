@@ -28,17 +28,17 @@ from fast_clean.schemas import PaginationResultSchema, PaginationSchema
 
 from .type_vars import (
     CreateSchemaBaseType,
-    CreateSchemaOldType,
+    CreateSchemaIntType,
     CreateSchemaType,
     IdType,
     ModelBaseType,
-    ModelOldType,
+    ModelIntType,
     ModelType,
     ReadSchemaBaseType,
-    ReadSchemaOldType,
+    ReadSchemaIntType,
     ReadSchemaType,
     UpdateSchemaBaseType,
-    UpdateSchemaOldType,
+    UpdateSchemaIntType,
     UpdateSchemaType,
 )
 
@@ -526,19 +526,19 @@ class DbCrudRepositoryBase(
         return order_by_expr
 
 
-class DbCrudRepositoryOld(
+class DbCrudRepositoryInt(
     DbCrudRepositoryBase[
-        ModelOldType,
-        ReadSchemaOldType,
-        CreateSchemaOldType,
-        UpdateSchemaOldType,
+        ModelIntType,
+        ReadSchemaIntType,
+        CreateSchemaIntType,
+        UpdateSchemaIntType,
         int,
     ],
     Generic[
-        ModelOldType,
-        ReadSchemaOldType,
-        CreateSchemaOldType,
-        UpdateSchemaOldType,
+        ModelIntType,
+        ReadSchemaIntType,
+        CreateSchemaIntType,
+        UpdateSchemaIntType,
     ],
 ):
     """

@@ -15,14 +15,14 @@ from fast_clean.schemas import PaginationResultSchema, PaginationSchema
 
 from .type_vars import (
     CreateSchemaBaseType,
-    CreateSchemaOldType,
+    CreateSchemaIntType,
     CreateSchemaType,
     IdType,
     ReadSchemaBaseType,
-    ReadSchemaOldType,
+    ReadSchemaIntType,
     ReadSchemaType,
     UpdateSchemaBaseType,
-    UpdateSchemaOldType,
+    UpdateSchemaIntType,
     UpdateSchemaType,
 )
 
@@ -311,17 +311,17 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
         return model
 
 
-class InMemoryCrudRepositoryOld(
+class InMemoryCrudRepositoryInt(
     InMemoryCrudRepositoryBase[
-        ReadSchemaOldType,
-        CreateSchemaOldType,
-        UpdateSchemaOldType,
+        ReadSchemaIntType,
+        CreateSchemaIntType,
+        UpdateSchemaIntType,
         int,
     ],
     Generic[
-        ReadSchemaOldType,
-        CreateSchemaOldType,
-        UpdateSchemaOldType,
+        ReadSchemaIntType,
+        CreateSchemaIntType,
+        UpdateSchemaIntType,
     ],
 ):
     """

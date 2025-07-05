@@ -6,10 +6,10 @@ from .cache import CacheManager as CacheManager
 from .cache import CacheRepositoryProtocol as CacheRepositoryProtocol
 from .cache import InMemoryCacheRepository as InMemoryCacheRepository
 from .cache import RedisCacheRepository as RedisCacheRepository
-from .crud import CrudRepositoryOldProtocol as CrudRepositoryOldProtocol
+from .crud import CrudRepositoryIntProtocol as CrudRepositoryIntProtocol
 from .crud import CrudRepositoryProtocol as CrudRepositoryProtocol
 from .crud import DbCrudRepository as DbCrudRepository
-from .crud import DbCrudRepositoryOld as DbCrudRepositoryOld
+from .crud import DbCrudRepositoryInt as DbCrudRepositoryInt
 from .settings import EnvSettingsRepository as EnvSettingsRepository
 from .settings import SettingsRepositoryError as SettingsRepositoryError
 from .settings import SettingsRepositoryFactoryImpl as SettingsRepositoryFactoryImpl
