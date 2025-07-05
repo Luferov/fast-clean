@@ -1,6 +1,6 @@
 [project]
 name = "fast-clean"
-version = "1.2.0"
+version = "1.2.1"
 description = "FastAPI Clean Architecture implementation"
 readme = "README.md"
 requires-python = ">=3.13"
