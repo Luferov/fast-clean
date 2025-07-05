@@ -22,6 +22,7 @@ from .type_vars import (
     CreateSchemaType,
     IdTypeContravariant,
     ReadSchemaBaseType,
+    ReadSchemaIntType,
     UpdateSchemaBaseType,
     UpdateSchemaIntType,
     UpdateSchemaType,
@@ -120,13 +121,13 @@ class CrudRepositoryBaseProtocol(
 
 class CrudRepositoryIntProtocol(
     CrudRepositoryBaseProtocol[
-        ReadSchemaBaseType,
+        ReadSchemaIntType,
         CreateSchemaIntType,
         UpdateSchemaIntType,
         int,
     ],
     Protocol[
-        ReadSchemaBaseType,
+        ReadSchemaIntType,
         CreateSchemaIntType,
         UpdateSchemaIntType,
     ],
