@@ -21,7 +21,7 @@ from sqlalchemy.ext.asyncio import (
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.sql import func
-from sqlalchemy_utils import UUIDType
+from sqlalchemy_utils.types.uuid import UUIDType
 from stringcase import snakecase
 
 from .settings import CoreDbSettingsSchema, CoreSettingsSchema
@@ -61,7 +61,7 @@ def make_async_session_factory(
     return async_sessionmaker(asyncio_engine, expire_on_commit=False, autoflush=False)
 
 
-class BaseParent(AsyncAttrs, DeclarativeBase):
+class Base(AsyncAttrs, DeclarativeBase):
     """
     Базовая родительская модель.
     """
@@ -71,7 +71,7 @@ class BaseParent(AsyncAttrs, DeclarativeBase):
     metadata = metadata
 
 
-class Base(BaseParent):
+class BaseUUID(Base):
     """
     Базовая родительская модель нового типа.
     """
@@ -90,7 +90,7 @@ class Base(BaseParent):
         return snakecase(cls.__name__)
 
 
-class BaseOld(BaseParent):
+class BaseInt(Base):
     """
     Базовая родительская модель старого типа.
     """
@@ -99,6 +99,10 @@ class BaseOld(BaseParent):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
+
+    @declared_attr.directive
+    def __tablename__(cls) -> str:
+        return snakecase(cls.__name__)
 
 class SessionFactory:
     """
@@ -170,8 +174,7 @@ class SessionManagerImpl:
         Получаем сессию для выполнения запроса.
         """
         if self.session.in_transaction():
-            async with self.session.begin_nested():
-                yield self.session
+            yield self.session
         else:
             async with self.session.begin():
                 if immediate:

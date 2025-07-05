@@ -16,14 +16,14 @@ jobs:
           cache-dependency-glob: "uv.lock"
       - name: Install the project
         run: uv sync --all-extras --dev
-      - name: Black
-        run: uv run black . --check --config pyproject.toml
-      - name: Ruff
+      - name: Pre-commit check
         run: uv run ruff check --fix --exit-non-zero-on-fix
       - name: Install pip for types
         run: uv pip install pip
       - name: Mypy
         run: uv run mypy --ignore-missing-imports --scripts-are-modules --install-types --non-interactive
+      - name: Pre-commit
+        run: uv run pre-commit run --all-files
   # test:
   #   name: Test
   #   runs-on: ubuntu-latest

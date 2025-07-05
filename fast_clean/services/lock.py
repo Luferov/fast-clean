@@ -6,9 +6,9 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import AsyncContextManager, Protocol
 
-import redis.asyncio.lock as aioredis_lock
 from fast_clean.exceptions import LockError
 from redis import asyncio as aioredis
+from redis.exceptions import LockError as AIORedisLockError
 
 
 class LockServiceProtocol(Protocol):
@@ -53,5 +53,5 @@ class RedisLockService:
         try:
             async with self.redis.lock(name, timeout=timeout, sleep=sleep, blocking_timeout=blocking_timeout):
                 yield
-        except aioredis_lock.LockError as lock_error:
+        except AIORedisLockError as lock_error:
             raise LockError() from lock_error

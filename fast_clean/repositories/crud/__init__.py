@@ -13,17 +13,17 @@ from typing import Any, Protocol, Self
 from fast_clean.schemas import PaginationResultSchema, PaginationSchema
 
 from .db import DbCrudRepository as DbCrudRepository
-from .db import DbCrudRepositoryOld as DbCrudRepositoryOld
+from .db import DbCrudRepositoryInt as DbCrudRepositoryInt
 from .in_memory import InMemoryCrudRepository as InMemoryCrudRepository
-from .in_memory import InMemoryCrudRepositoryOld as InMemoryCrudRepositoryOld
+from .in_memory import InMemoryCrudRepositoryInt as InMemoryCrudRepositoryInt
 from .type_vars import (
     CreateSchemaBaseType,
-    CreateSchemaOldType,
+    CreateSchemaIntType,
     CreateSchemaType,
     IdTypeContravariant,
     ReadSchemaBaseType,
     UpdateSchemaBaseType,
-    UpdateSchemaOldType,
+    UpdateSchemaIntType,
     UpdateSchemaType,
 )
 
@@ -118,17 +118,17 @@ class CrudRepositoryBaseProtocol(
         ...
 
 
-class CrudRepositoryOldProtocol(
+class CrudRepositoryIntProtocol(
     CrudRepositoryBaseProtocol[
         ReadSchemaBaseType,
-        CreateSchemaOldType,
-        UpdateSchemaOldType,
+        CreateSchemaIntType,
+        UpdateSchemaIntType,
         int,
     ],
     Protocol[
         ReadSchemaBaseType,
-        CreateSchemaOldType,
-        UpdateSchemaOldType,
+        CreateSchemaIntType,
+        UpdateSchemaIntType,
     ],
 ):
     """

@@ -34,9 +34,9 @@ class UpdateSchemaGeneric(BaseModel, Generic[IdType]):
     id: IdType
 
 
-CreateSchemaOld = CreateSchemaGeneric[int]
-ReadSchemaOld = ReadSchemaGeneric[int]
-UpdateSchemaOld = UpdateSchemaGeneric[int]
+CreateSchemaInt = CreateSchemaGeneric[int]
+ReadSchemaInt = ReadSchemaGeneric[int]
+UpdateSchemaInt = UpdateSchemaGeneric[int]
 
 CreateSchema = CreateSchemaGeneric[uuid.UUID]
 ReadSchema = ReadSchemaGeneric[uuid.UUID]

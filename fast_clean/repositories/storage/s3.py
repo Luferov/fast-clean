@@ -24,7 +24,7 @@ class S3StorageRepository:
     def __init__(self: Self, params: S3StorageParamsSchema):
         self.params = params
         self.bucket = self.params.bucket
-        self.client = miniopy_async.Minio(
+        self.client = miniopy_async.Minio(  # type: ignore
             f'{self.params.endpoint}:{self.params.port}',
             access_key=self.params.access_key,
             secret_key=self.params.secret_key,

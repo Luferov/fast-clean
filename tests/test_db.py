@@ -41,16 +41,3 @@ class TestSessionManager:
         assert len(call_args) == 1
         assert str(call_args[0]) == str(sa.text('SET CONSTRAINTS ALL IMMEDIATE'))
         assert not session_manager.session.in_transaction()
-
-    @staticmethod
-    async def test_get_session_begin_nested(
-        session_manager: SessionManagerImpl,
-    ) -> None:
-        """
-        Тестируем запуск дочерней транзакции в методе `begin`.
-        """
-        async with session_manager.session.begin():
-            assert not session_manager.session.in_nested_transaction()
-            async with session_manager.get_session():
-                assert session_manager.session.in_nested_transaction()
-            assert not session_manager.session.in_nested_transaction()
