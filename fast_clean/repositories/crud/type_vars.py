@@ -5,7 +5,7 @@
 import uuid
 from typing import TypeVar
 
-from fast_clean.db import Base, BaseOld
+from fast_clean.db import Base, BaseInt
 from fast_clean.schemas import (
     CreateSchema,
     CreateSchemaOld,
@@ -15,7 +15,7 @@ from fast_clean.schemas import (
     UpdateSchemaOld,
 )
 
-ModelBaseType = TypeVar('ModelBaseType', bound=BaseOld | Base)
+ModelBaseType = TypeVar('ModelBaseType', bound=BaseInt | Base)
 CreateSchemaBaseType = TypeVar('CreateSchemaBaseType', bound=CreateSchemaOld | CreateSchema)
 ReadSchemaBaseType = TypeVar('ReadSchemaBaseType', bound=ReadSchemaOld | ReadSchema)
 UpdateSchemaBaseType = TypeVar('UpdateSchemaBaseType', bound=UpdateSchemaOld | UpdateSchema)
@@ -23,7 +23,7 @@ IdType = TypeVar('IdType', bound=int | uuid.UUID)
 IdTypeContravariant = TypeVar('IdTypeContravariant', bound=int | uuid.UUID, contravariant=True)
 
 
-ModelOldType = TypeVar('ModelOldType', bound=BaseOld)
+ModelOldType = TypeVar('ModelOldType', bound=BaseInt)
 CreateSchemaOldType = TypeVar('CreateSchemaOldType', bound=CreateSchemaOld)
 ReadSchemaOldType = TypeVar('ReadSchemaOldType', bound=ReadSchemaOld)
 UpdateSchemaOldType = TypeVar('UpdateSchemaOldType', bound=UpdateSchemaOld)

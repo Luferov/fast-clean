@@ -3,14 +3,16 @@ name = "fast-clean"
 version = "1.1.1"
 description = "FastAPI Clean Architecture implementation"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 authors = [
     {name = "Luferov Victor", email = "luferovvs@yandex.ru"},
     {name = "Orlov Artem", email = "squakrazv@yandex.ru"},
+    {name = "Kashapov Rustam", email = "hardtechnik91@gmail.com"},
 ]
 dependencies = [
     "aiofiles>=24.1.0",
     "aiokafka>=0.12.0",
+    "aioprometheus>=23.12.0",
     "cryptography>=44.0.1",
     "dishka>=1.6.0",
     "fastapi>=0.115.8",
@@ -19,10 +21,12 @@ dependencies = [
     "flatten-dict>=0.4.2",
     "miniopy-async>=1.21.1",
     "overrides>=7.7.0",
-    "psycopg>=3.2.4",
+    "psycopg[binary]>=3.2.4",
     "pydantic>=2.10.6",
     "pydantic-settings>=2.8.0",
     "pyyaml>=6.0.2",
+    "sentry-sdk>=2.32.0",
+    "snakecase>=1.0.1",
     "sqlalchemy-utils>=0.41.2",
     "sqlalchemy[asyncio]>=2.0.38",
     "stringcase>=1.2.0",
@@ -43,14 +47,11 @@ dev = [
     "pytest-sugar>=1.0.0",
     "pytest-xdist>=3.6.1",
     "ruff>=0.9.7",
+    "types-sqlalchemy-utils>=1.1.0",
 ]
 
 [tool.ruff.format]
 quote-style = "single"
-
-[tool.black]
-skip-string-normalization = true
-line-length = 120
 
 [tool.ruff]
 line-length = 120

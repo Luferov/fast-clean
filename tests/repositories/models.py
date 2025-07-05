@@ -4,15 +4,15 @@
 
 import uuid
 
-from fast_clean.db import Base
+from fast_clean.db import BaseUUID
 from sqlalchemy import Boolean, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy_utils import ChoiceType
+from sqlalchemy_utils.types import ChoiceType
 
 from .enums import CrudModelTypeEnum
 
 
-class CrudParentModel(Base):
+class CrudParentModel(BaseUUID):
     """
     Родительская тестовая модель для тестирования репозитория.
     """

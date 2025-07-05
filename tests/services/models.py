@@ -6,12 +6,12 @@ from __future__ import annotations
 
 import uuid
 
-from fast_clean.db import Base
+from fast_clean.db import BaseUUID
 from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
-class SeedChildModel(Base):
+class SeedChildModel(BaseUUID):
     """
     Дочерняя тестовая модель для тестирования загрузки данных из файлов.
     """
@@ -24,7 +24,7 @@ class SeedChildModel(Base):
     parent: Mapped[SeedParentModel] = relationship(back_populates='children')
 
 
-class SeedParentModel(Base):
+class SeedParentModel(BaseUUID):
     """
     Родительская тестовая модель для тестирования загрузки данных из файлов.
     """
