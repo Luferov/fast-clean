@@ -1,7 +1,10 @@
+from typing import Any
+
 import sqlalchemy_utils
+from alembic.autogenerate.api import AutogenContext
 
 
-def render_item(type_, obj, autogen_context):
+def render_item(type_: str, obj: Any, autogen_context: AutogenContext):
     """
     Apply custom rendering for selected items.
     """
