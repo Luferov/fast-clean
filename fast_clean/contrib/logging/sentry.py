@@ -13,9 +13,6 @@ def use_sentry(
     level: int = logging.DEBUG,
     event_level: int = logging.ERROR,
 ) -> None:
-    if not dsn:
-        return
-
     sentry_logging = LoggingIntegration(
         level=level,
         event_level=event_level,
