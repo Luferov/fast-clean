@@ -123,16 +123,16 @@ wheels = [
 
 [[package]]
 name = "alembic"
-version = "1.16.2"
+version = "1.16.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "mako" },
     { name = "sqlalchemy" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9c/35/116797ff14635e496bbda0c168987f5326a6555b09312e9b817e360d1f56/alembic-1.16.2.tar.gz", hash = "sha256:e53c38ff88dadb92eb22f8b150708367db731d58ad7e9d417c9168ab516cbed8", size = 1963563, upload-time = "2025-06-16T18:05:08.566Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b9/40/28683414cc8711035a65256ca689e159471aa9ef08e8741ad1605bc01066/alembic-1.16.3.tar.gz", hash = "sha256:18ad13c1f40a5796deee4b2346d1a9c382f44b8af98053897484fa6cf88025e4", size = 1967462, upload-time = "2025-07-08T18:57:50.991Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/dd/e2/88e425adac5ad887a087c38d04fe2030010572a3e0e627f8a6e8c33eeda8/alembic-1.16.2-py3-none-any.whl", hash = "sha256:5f42e9bd0afdbd1d5e3ad856c01754530367debdebf21ed6894e34af52b3bb03", size = 242717, upload-time = "2025-06-16T18:05:10.27Z" },
+    { url = "https://files.pythonhosted.org/packages/e6/68/1dea77887af7304528ea944c355d769a7ccc4599d3a23bd39182486deb42/alembic-1.16.3-py3-none-any.whl", hash = "sha256:70a7c7829b792de52d08ca0e3aefaf060687cb8ed6bebfa557e597a1a5e5a481", size = 246933, upload-time = "2025-07-08T18:57:52.793Z" },
 ]
 
 [[package]]
@@ -241,11 +241,11 @@ wheels = [
 
 [[package]]
 name = "certifi"
-version = "2025.6.15"
+version = "2025.7.9"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/73/f7/f14b46d4bcd21092d7d3ccef689615220d8a08fb25e564b65d20738e672e/certifi-2025.6.15.tar.gz", hash = "sha256:d747aa5a8b9bbbb1bb8c22bb13e22bd1f18e9796defa16bab421f7f7a317323b", size = 158753, upload-time = "2025-06-15T02:45:51.329Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/de/8a/c729b6b60c66a38f590c4e774decc4b2ec7b0576be8f1aa984a53ffa812a/certifi-2025.7.9.tar.gz", hash = "sha256:c1d2ec05395148ee10cf672ffc28cd37ea0ab0d99f9cc74c43e588cbd111b079", size = 160386, upload-time = "2025-07-09T02:13:58.874Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/84/ae/320161bd181fc06471eed047ecce67b693fd7515b16d495d8932db763426/certifi-2025.6.15-py3-none-any.whl", hash = "sha256:2e0c7ce7cb5d8f8634ca55d2ba7e6ec2689a2fd6537d8dec1296a477a4910057", size = 157650, upload-time = "2025-06-15T02:45:49.977Z" },
+    { url = "https://files.pythonhosted.org/packages/66/f3/80a3f974c8b535d394ff960a11ac20368e06b736da395b551a49ce950cce/certifi-2025.7.9-py3-none-any.whl", hash = "sha256:d842783a14f8fdd646895ac26f719a061408834473cfc10203f6a575beb15d39", size = 159230, upload-time = "2025-07-09T02:13:57.007Z" },
 ]
 
 [[package]]
@@ -532,16 +532,16 @@ wheels = [
 
 [[package]]
 name = "fastapi"
-version = "0.115.14"
+version = "0.116.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic" },
     { name = "starlette" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ca/53/8c38a874844a8b0fa10dd8adf3836ac154082cf88d3f22b544e9ceea0a15/fastapi-0.115.14.tar.gz", hash = "sha256:b1de15cdc1c499a4da47914db35d0e4ef8f1ce62b624e94e0e5824421df99739", size = 296263, upload-time = "2025-06-26T15:29:08.21Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/20/38/e1da78736143fd885c36213a3ccc493c384ae8fea6a0f0bc272ef42ebea8/fastapi-0.116.0.tar.gz", hash = "sha256:80dc0794627af0390353a6d1171618276616310d37d24faba6648398e57d687a", size = 296518, upload-time = "2025-07-07T15:09:27.82Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/53/50/b1222562c6d270fea83e9c9075b8e8600b8479150a18e4516a6138b980d1/fastapi-0.115.14-py3-none-any.whl", hash = "sha256:6c0c8bf9420bd58f565e585036d971872472b4f7d3f6c73b698e10cffdefb3ca", size = 95514, upload-time = "2025-06-26T15:29:06.49Z" },
+    { url = "https://files.pythonhosted.org/packages/2f/68/d80347fe2360445b5f58cf290e588a4729746e7501080947e6cdae114b1f/fastapi-0.116.0-py3-none-any.whl", hash = "sha256:fdcc9ed272eaef038952923bef2b735c02372402d1203ee1210af4eea7a78d2b", size = 95625, upload-time = "2025-07-07T15:09:26.348Z" },
 ]
 
 [[package]]
@@ -566,16 +566,16 @@ redis = [
 
 [[package]]
 name = "faststream"
-version = "0.5.44"
+version = "0.5.45"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
     { name = "fast-depends" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/40/36/8378c4f263d3b2ed566427165d4c90659fe6cdcde3ea1c6e4fb2d4345d01/faststream-0.5.44.tar.gz", hash = "sha256:066fa17823e78c88f4ae6f84080b9b32a097a8354d7e85c67fe7b17e36508ad3", size = 300598, upload-time = "2025-07-04T04:59:39.501Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/1b/35/b512119f06b4ef8e19d34d340843603b48381316e6afb896bacce347e746/faststream-0.5.45.tar.gz", hash = "sha256:6c13fc92bd4557b47b87903e0a16c889d0961206eae4a4cd561f552fc0663ed3", size = 300779, upload-time = "2025-07-07T19:22:28.538Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5a/ef/bdcce44b2e10654a43b6a05033c44b99d9bf1c2ce838dc05380edbd6d5f8/faststream-0.5.44-py3-none-any.whl", hash = "sha256:103267a5551799bcce5c9e20f24f8a440cdce4d2c83fb7ba762167a070fe5cab", size = 401684, upload-time = "2025-07-04T04:59:37.675Z" },
+    { url = "https://files.pythonhosted.org/packages/72/3b/b0a131acce5510872e5b5b3d546883c474337433f9579314ac937c92da43/faststream-0.5.45-py3-none-any.whl", hash = "sha256:9d336ace81d77751ff38eac890ec0c5783bcacca73660d5ec9e041649507615d", size = 401681, upload-time = "2025-07-07T19:22:26.192Z" },
 ]
 
 [[package]]

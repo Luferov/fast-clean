@@ -41,5 +41,4 @@ jobs:
         id: semantic
         uses: relekang/python-semantic-release@master
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
