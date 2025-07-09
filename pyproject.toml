@@ -1,6 +1,6 @@
 [project]
 name = "fast-clean"
-version = "1.2.4"
+version = "1.2.2"
 description = "FastAPI Clean Architecture implementation"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -107,6 +107,5 @@ version_toml = [
 ]
 commit_message = "chore(release): {version} [skip ci]"
 branch = "main"
-upload_to_pypi = true
+upload_to_pypi = false
 upload_to_release = true
-build_command = "pip install uv && uv build"
