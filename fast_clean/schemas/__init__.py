@@ -22,4 +22,3 @@ from .request_response import RemoteRequestSchema as RemoteRequestSchema
 from .request_response import RemoteResponseSchema as RemoteResponseSchema
 from .request_response import RequestSchema as RequestSchema
 from .request_response import ResponseSchema as ResponseSchema
-from .status_response import StatusOkResponseSchema as StatusOkResponseSchema

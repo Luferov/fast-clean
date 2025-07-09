@@ -43,14 +43,10 @@ jobs:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
       - name: Install the project
-        run: uv sync --all-extras --dev
+        run: uv sync
       - name: Semantic Release
         id: semantic
         uses: relekang/python-semantic-release@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build & Publish
-        if: steps.semantic.outputs.released == 'true'
-        run: uv build && uv publish
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}

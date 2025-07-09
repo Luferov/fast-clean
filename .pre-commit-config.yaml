@@ -6,11 +6,32 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
+      - id: no-commit-to-branch
+        args: [ "--branch", "master" ]
       - id: check-yaml
         args: [ --allow-multiple-documents ]
+      - id: check-toml
+        files: '\.toml$'
+      - id: check-merge-conflict
       - id: trailing-whitespace
+        args: [ --markdown-linebreak-ext=md ]
       - id: check-case-conflict
       - id: check-symlinks
+      - id: detect-private-key
+      - id: check-case-conflict
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.33.0
+    hooks:
+      - id: check-github-workflows
+        args: ["--verbose"]
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.1
+    hooks:
+      - id: codespell
+        additional_dependencies: [ tomli ]
+        files: '\.(py|pyi|md|yml|yaml|json|toml)$'
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.9.7
