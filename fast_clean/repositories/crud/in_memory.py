@@ -145,8 +145,6 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
     async def paginate(
         self: Self,
         pagination: PaginationSchema,
-        user: Any,
-        policies: list[str],
         *,
         search: str | None = None,
         search_by: Iterable[str] | None = None,
@@ -157,8 +155,6 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
         """
         return self.paginate_with_filter(
             pagination,
-            user,
-            policies,
             search=search,
             search_by=search_by,
             sorting=sorting,
@@ -251,8 +247,6 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
     def paginate_with_filter(
         self: Self,
         pagination: PaginationSchema,
-        user: Any,
-        policies: list[str],
         *,
         search: str | None = None,
         search_by: Iterable[str] | None = None,
@@ -262,8 +256,6 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
         """
         Получаем список моделей с пагинацией, поиском, сортировкой и фильтрами.
         """
-        if len(policies) == 0:
-            return PaginationResultSchema(objects=[], count=0)
         search_by = search_by or []
         sorting = sorting or []
         models = list(filter(select_filter, self.models.values()) if select_filter else self.models.values())

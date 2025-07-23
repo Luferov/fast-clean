@@ -70,8 +70,6 @@ class CrudRepositoryBaseProtocol(
     async def paginate(
         self: Self,
         pagination: PaginationSchema,
-        user: Any,
-        policies: list[str],
         *,
         search: str | None = None,
         search_by: Iterable[str] | None = None,
