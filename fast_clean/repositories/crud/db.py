@@ -173,8 +173,6 @@ class DbCrudRepositoryBase(
     async def paginate(
         self: Self,
         pagination: PaginationSchema,
-        user: Any,
-        policies: list[str],
         *,
         search: str | None = None,
         search_by: Iterable[str] | None = None,
@@ -185,8 +183,6 @@ class DbCrudRepositoryBase(
         """
         return await self.paginate_with_filter(
             pagination,
-            user,
-            policies,
             search=search,
             search_by=search_by,
             sorting=sorting,
@@ -475,8 +471,6 @@ class DbCrudRepositoryBase(
     async def paginate_with_filter(
         self: Self,
         pagination: PaginationSchema,
-        user: Any,
-        policies: list[str],
         *,
         search: str | None = None,
         search_by: Iterable[str] | None = None,
@@ -486,8 +480,6 @@ class DbCrudRepositoryBase(
         """
         Получаем список моделей с пагинацией, поиском, сортировкой и фильтрами.
         """
-        if len(policies) == 0:
-            return PaginationResultSchema(objects=[], count=0)
         search_by = search_by or []
         sorting = sorting or []
         async with self.session_manager.get_session() as s:
