@@ -7,7 +7,7 @@ import uuid
 from abc import ABC, abstractmethod
 from collections.abc import Iterable, Sequence
 from itertools import groupby
-from typing import Any, Callable, Generic, Self, cast, get_args
+from typing import Callable, Generic, Self, cast, get_args
 
 from fast_clean.enums import ModelActionEnum
 from fast_clean.exceptions import ModelIntegrityError, ModelNotFoundError

@@ -8,7 +8,7 @@
 
 import uuid
 from collections.abc import Iterable, Sequence
-from typing import Any, Protocol, Self
+from typing import Protocol, Self
 
 from fast_clean.schemas import PaginationResultSchema, PaginationSchema
 
