@@ -4,7 +4,7 @@
 
 import asyncio
 import os
-from collections.abc import AsyncGenerator, Awaitable, Callable
+from collections.abc import AsyncGenerator, AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from logging import getLogger
 from pathlib import Path
@@ -27,6 +27,14 @@ class LocalStorageRepository:
         if not os.path.exists(self.work_dir):
             os.makedirs(self.work_dir)
         self.logger = getLogger(__name__)
+
+    async def __aenter__(self: Self) -> Self:
+        """
+        Вход в контекст менеджера.
+        """
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb): ...
 
     async def exists(self: Self, path: str | Path) -> bool:
         """
@@ -78,6 +86,12 @@ class LocalStorageRepository:
         async with open(path, 'rb') as f:
             yield AiofilesStreamReader(f)
 
+    async def straming_read(self: Self, path: str | Path) -> AsyncIterator[bytes]:
+        path = self.work_dir / path
+        async with open(path, 'rb') as f:
+            async for chunk in f:
+                yield chunk
+
     async def write(self: Self, path: str | Path, content: str | bytes) -> None:
         """
         Создаем файл или переписываем существующий.
@@ -91,15 +105,11 @@ class LocalStorageRepository:
         self: Self,
         path: str | Path,
         stream: StreamReadProtocol,
-        length: int = -1,
-        part_size: int = 0,
     ) -> None:
         """
         Создаем файл или переписываем существующий в потоковом режиме.
         """
-        if length != -1:
-            self.logger.warning('Параметр length не используется для LocalStorage.')
-        part_size = part_size or 1024
+        part_size = 1024 * 1024
         path = self.work_dir / path
         is_co_function = asyncio.iscoroutinefunction(stream.read)
         async with open(path, 'wb') as f:

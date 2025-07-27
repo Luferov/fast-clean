@@ -27,6 +27,8 @@ class CoreDbSettingsSchema(BaseModel):
     password: str
     name: str
 
+    pool_pre_ping: bool = True
+    disable_prepared_statements: bool = True
     scheme: str = 'public'
 
     @property
@@ -53,9 +55,8 @@ class CoreS3SettingsSchema(BaseModel):
     """
 
     endpoint: str
-    endpoint_url: str
-    access_key: str
-    secret_key: str
+    aws_access_key_id: str
+    aws_secret_access_key: str
     port: int
     bucket: str
     secure: bool = False

@@ -7,7 +7,7 @@ from __future__ import annotations
 import uuid
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import TYPE_CHECKING, AsyncContextManager, Protocol, Self
+from typing import TYPE_CHECKING, Any, AsyncContextManager, Protocol, Self
 
 import sqlalchemy as sa
 from sqlalchemy import MetaData
@@ -18,11 +18,9 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     create_async_engine,
 )
-from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.sql import func
-from sqlalchemy_utils.types.uuid import UUIDType
-from stringcase import snakecase
+from sqlalchemy_utils.types import UUIDType
 
 from .settings import CoreDbSettingsSchema, CoreSettingsSchema
 
@@ -40,24 +38,46 @@ POSTGRES_INDEXES_NAMING_CONVENTION = {
 metadata = MetaData(naming_convention=POSTGRES_INDEXES_NAMING_CONVENTION)
 
 
-def make_async_engine(db_dsn: str, *, scheme: str = 'public', echo: bool = False) -> AsyncEngine:
+def make_async_engine(
+    db_dsn: str,
+    *,
+    scheme: str = 'public',
+    echo: bool = False,
+    pool_pre_ping: bool = True,
+    disable_prepared_statements: bool = True,
+) -> AsyncEngine:
     """
     Создаем асинхронный движок.
     """
+    connect_args: dict[str, Any] = {}
+    if disable_prepared_statements:
+        connect_args['prepare_threshold'] = None
     return create_async_engine(
         db_dsn,
-        connect_args={'options': f'-csearch_path={scheme}'},
         echo=echo,
+        pool_pre_ping=pool_pre_ping,
+        connect_args=connect_args,
     )
 
 
 def make_async_session_factory(
-    db_dsn: str, *, scheme: str = 'public', echo: bool = False
+    db_dsn: str,
+    *,
+    scheme: str = 'public',
+    echo: bool = False,
+    pool_pre_ping: bool = True,
+    disable_prepared_statements: bool = True,
 ) -> async_sessionmaker[AsyncSession]:
     """
     Создаем фабрику асинхронных сессий.
     """
-    asyncio_engine = make_async_engine(db_dsn, scheme=scheme, echo=echo)
+    asyncio_engine = make_async_engine(
+        db_dsn,
+        scheme=scheme,
+        echo=echo,
+        pool_pre_ping=pool_pre_ping,
+        disable_prepared_statements=disable_prepared_statements,
+    )
     return async_sessionmaker(asyncio_engine, expire_on_commit=False, autoflush=False)
 
 
@@ -85,10 +105,6 @@ class BaseUUID(Base):
         server_default=func.gen_random_uuid(),
     )
 
-    @declared_attr.directive
-    def __tablename__(cls) -> str:
-        return snakecase(cls.__name__)
-
 
 class BaseInt(Base):
     """
@@ -99,10 +115,6 @@ class BaseInt(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-
-    @declared_attr.directive
-    def __tablename__(cls) -> str:
-        return snakecase(cls.__name__)
 
 class SessionFactory:
     """
@@ -125,16 +137,13 @@ class SessionFactory:
             yield session
 
     @classmethod
-    @asynccontextmanager
     async def make_async_session_dynamic(
         cls, settings_repository: SettingsRepositoryProtocol
-    ) -> AsyncIterator[AsyncSession]:
+    ) -> async_sessionmaker[AsyncSession]:
         """
         Создаем асинхронную сессию с помощью динамической фабрики.
         """
-        async_session_factory = await cls.make_async_session_factory(settings_repository)
-        async with async_session_factory() as session:
-            yield session
+        return await cls.make_async_session_factory(settings_repository)
 
     @staticmethod
     async def make_async_session_factory(
@@ -145,7 +154,13 @@ class SessionFactory:
         """
         settings = await settings_repository.get(CoreSettingsSchema)
         db_settings = await settings_repository.get(CoreDbSettingsSchema)
-        return make_async_session_factory(db_settings.dsn, scheme=db_settings.scheme, echo=settings.debug)
+        return make_async_session_factory(
+            db_settings.dsn,
+            scheme=db_settings.scheme,
+            echo=settings.debug,
+            pool_pre_ping=db_settings.pool_pre_ping,
+            disable_prepared_statements=db_settings.disable_prepared_statements,
+        )
 
 
 class SessionManagerProtocol(Protocol):

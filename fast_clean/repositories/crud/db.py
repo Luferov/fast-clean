@@ -502,11 +502,11 @@ class DbCrudRepositoryBase(
             count = (await s.execute(count_statement)).scalar_one()
             return PaginationResultSchema(count=count, objects=objects)
 
-    def get_order_by_expr(self: Self, sorting: Iterable[str]) -> list[sa.UnaryExpression]:
+    def get_order_by_expr(self: Self, sorting: Iterable[str]) -> list[sa.UnaryExpression[Any]]:
         """
         Получаем выражение сортировки.
         """
-        order_by_expr: list[sa.UnaryExpression] = []
+        order_by_expr: list[sa.UnaryExpression[Any]] = []
         for st in sorting:
             try:
                 if st[0] == '-':
