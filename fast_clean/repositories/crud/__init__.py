@@ -8,7 +8,7 @@
 
 import uuid
 from collections.abc import Iterable, Sequence
-from typing import Any, Protocol, Self
+from typing import Protocol, Self
 
 from fast_clean.schemas import PaginationResultSchema, PaginationSchema
 
@@ -70,8 +70,6 @@ class CrudRepositoryBaseProtocol(
     async def paginate(
         self: Self,
         pagination: PaginationSchema,
-        user: Any,
-        policies: list[str],
         *,
         search: str | None = None,
         search_by: Iterable[str] | None = None,

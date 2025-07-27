@@ -152,8 +152,6 @@ class TestCrudRepositories:
         expected_models = sorted((model for model in MODELS), key=lambda model: (model.str_column, -model.int_column))
         pagination_result = await crud_repository.paginate(
             PaginationSchema(limit=len(MODELS), offset=0),
-            {},
-            ['object.int_column < 20'],
             sorting=['str_column', '-int_column'],
         )
         assert pagination_result.count == len(expected_models)
@@ -168,8 +166,6 @@ class TestCrudRepositories:
         expected_models = {cast(Hashable, model) for model in MODELS if search in model.str_column}
         pagination_result = await crud_repository.paginate(
             PaginationSchema(limit=10, offset=0),
-            {},
-            ['object.int_column > 4'],
             search_by=['str_column'],
             search=search,
         )
