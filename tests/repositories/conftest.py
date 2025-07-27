@@ -12,12 +12,16 @@ from contextlib import asynccontextmanager, contextmanager
 from itertools import groupby
 from typing import cast
 
-import miniopy_async
+import aiobotocore
+import aiobotocore.session
 import pytest
 import sqlalchemy as sa
 from aiokafka import AIOKafkaConsumer
+from botocore.exceptions import ClientError
 from fast_clean.db import (
-    Base,
+    BaseUUID as Base,
+)
+from fast_clean.db import (
     SessionManagerImpl,
     make_async_engine,
     make_async_session_factory,
@@ -188,29 +192,40 @@ async def make_s3_storage_repository(
     """
     Создаем репозиторий хранилища S3.
     """
-    minio_client = miniopy_async.Minio( # type: ignore
-        f'{settings.storage.s3.endpoint}:{settings.storage.s3.port}',
-        access_key=settings.storage.s3.access_key,
-        secret_key=settings.storage.s3.secret_key,
-        secure=settings.storage.s3.secure,
-    )
-    await minio_client.make_bucket(settings.storage.s3.bucket)
-    for path, item in walk_path(directory):
-        if isinstance(item, FileSchema):
-            data = io.BytesIO(item.content)
-            await minio_client.put_object(
-                settings.storage.s3.bucket,
-                str(path),
-                data,
-                len(item.content),
-            )
-    try:
-        yield S3StorageRepository(S3StorageParamsSchema.model_validate(settings.storage.s3.model_dump()))
+    params = settings.storage.s3
+    session = aiobotocore.session.get_session()
+    protocol = 'https' if settings.storage.s3.secure else 'http'
+    endpoint_url = f'{protocol}://{params.endpoint}:{params.port}'
+    async with session.create_client(
+        's3',
+        endpoint_url=endpoint_url,
+        aws_access_key_id=params.aws_access_key_id,
+        aws_secret_access_key=params.aws_secret_access_key,
+        region_name='',
+    ) as client:
+        try:
+            await client.head_bucket(Bucket=params.bucket)
+        except ClientError as e:
+            if e.response.get('Error', {}).get('Code') == '404':
+                await client.create_bucket(Bucket=params.bucket)
+            else:
+                raise
         for path, item in walk_path(directory):
             if isinstance(item, FileSchema):
-                await minio_client.remove_object(settings.storage.s3.bucket, str(path))
-    finally:
-        await minio_client.remove_bucket(settings.storage.s3.bucket)
+                data = io.BytesIO(item.content)
+                await client.put_object(
+                    Bucket=params.bucket,
+                    Key=str(path),
+                    Body=data,
+                    ContentLength=len(item.content),
+                )
+        try:
+            yield S3StorageRepository(S3StorageParamsSchema.model_validate(settings.storage.s3.model_dump()))
+            for path, item in walk_path(directory):
+                if isinstance(item, FileSchema):
+                    await client.delete_object(Bucket=params.bucket, Key=str(path))
+        finally:
+            await client.delete_bucket(Bucket=params.bucket)
 
 
 @pytest.fixture

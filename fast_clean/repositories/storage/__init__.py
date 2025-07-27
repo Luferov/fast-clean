@@ -6,11 +6,13 @@
 - S3
 """
 
+from collections.abc import AsyncIterator
 from pathlib import Path
 from typing import AsyncContextManager, Protocol, Self
 
 from .enums import StorageTypeEnum
 from .local import LocalStorageRepository
+from .reader import AsyncStreamReaderProtocol as AsyncStreamReaderProtocol
 from .reader import StreamReaderProtocol, StreamReadProtocol
 from .s3 import S3StorageRepository
 from .schemas import (
@@ -24,6 +26,18 @@ class StorageRepositoryProtocol(Protocol):
     """
     Протокол репозитория файлового хранилища.
     """
+
+    async def __aenter__(self: Self) -> Self:
+        """
+        Вход в контекст менеджера.
+        """
+        ...
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
+        """
+        Выход из контекст менеджера.
+        """
+        ...
 
     async def exists(self: Self, path: str | Path) -> bool:
         """
@@ -71,11 +85,15 @@ class StorageRepositoryProtocol(Protocol):
         self: Self,
         path: str | Path,
         stream: StreamReadProtocol,
-        length: int = -1,
-        part_size: int = 0,
     ) -> None:
         """
         Создаем файл или переписываем существующий в потоковом режиме.
+        """
+        ...
+
+    def straming_read(self: Self, path: str | Path) -> AsyncIterator[bytes]:
+        """
+        Возвращаем асинхронные итератор потока байт.
         """
         ...
 

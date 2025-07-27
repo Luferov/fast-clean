@@ -9,9 +9,9 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
 
-class TimestampMixin:
+class CreatedAtMixin:
     """
-    Миксин, содержащий дату и время создания и обновления модели.
+    Миксин, содержащий дату и время создания записи.
     """
 
     created_at: Mapped[dt.datetime] = mapped_column(
@@ -19,15 +19,22 @@ class TimestampMixin:
         default=lambda: dt.datetime.now(dt.UTC),
         server_default=func.now(),
     )
+
+
+class UpdatedAtMixin:
     """
-    Дата и время создания.
+    Миксин, содержащий дату и время обновления записи.
     """
+
     updated_at: Mapped[dt.datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: dt.datetime.now(dt.UTC),
         server_default=func.now(),
         onupdate=lambda: dt.datetime.now(dt.UTC),
     )
+
+
+class TimestampMixin(CreatedAtMixin, UpdatedAtMixin):
     """
-    Дата и время обновления.
+    Миксин, содержащий дату и время создания и обновления записи.
     """
