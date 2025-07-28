@@ -35,6 +35,14 @@ class StreamReadAsyncProtocol(Protocol):
         ...
 
 
+class AsyncStreamReaderProtocol(Protocol):
+    async def read(self: Self, size: int = -1) -> bytes:
+        """
+        Потоковое чтение файлов.
+        """
+        ...
+
+
 StreamReadProtocol = StreamReadAsyncProtocol | StreamReadSyncProtocol
 
 

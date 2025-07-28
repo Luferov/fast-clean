@@ -34,16 +34,18 @@ repos:
         files: '\.(py|pyi|md|yml|yaml|json|toml)$'
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.7
+    rev: v0.12.4
     hooks:
-      - id: ruff
+      - id: ruff-check
         args: [ --fix, --exit-non-zero-on-fix ]
         types_or: [ python, pyi, jupyter ]
         stages: [ pre-commit ]
+      - id: ruff-format
+        types_or: [ python, pyi ]
 
   # mypy - lint-like type checking
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.15.0
+    rev: v1.17.0
     hooks:
       - id: mypy
         args: [ "--ignore-missing-imports", "--scripts-are-modules" ]

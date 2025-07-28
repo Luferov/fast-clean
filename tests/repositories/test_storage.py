@@ -50,10 +50,11 @@ class TestStorageRepositories:
         """
         Тестируем метод `exists`.
         """
-        for path, item in walk(DIRECTORY):
-            if isinstance(item, FileSchema):
-                assert await storage_repository.exists(path)
-        assert not await storage_repository.exists('unknown_file')
+        async with storage_repository:
+            for path, item in walk(DIRECTORY):
+                if isinstance(item, FileSchema):
+                    assert await storage_repository.exists(path)
+            assert not await storage_repository.exists('unknown_file')
 
     @staticmethod
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
@@ -69,7 +70,8 @@ class TestStorageRepositories:
                     if isinstance(child, DirectorySchema):
                         child_path += '/'
                     actual_paths.add(child_path)
-                assert set(await storage_repository.listdir(path)) == actual_paths
+                async with storage_repository:
+                    assert set(await storage_repository.listdir(path)) == actual_paths
 
     @staticmethod
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
@@ -77,11 +79,12 @@ class TestStorageRepositories:
         """
         Тестируем метод `is_file`.
         """
-        for path, item in walk(DIRECTORY):
-            if isinstance(item, FileSchema):
-                assert await storage_repository.is_file(path)
-            else:
-                assert not await storage_repository.is_file(path)
+        async with storage_repository:
+            for path, item in walk(DIRECTORY):
+                if isinstance(item, FileSchema):
+                    assert await storage_repository.is_file(path)
+                else:
+                    assert not await storage_repository.is_file(path)
 
     @staticmethod
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
@@ -89,11 +92,12 @@ class TestStorageRepositories:
         """
         Тестируем метод `is_dir`.
         """
-        for path, item in walk(DIRECTORY):
-            if isinstance(item, DirectorySchema):
-                assert await storage_repository.is_dir(path)
-            else:
-                assert not await storage_repository.is_dir(path)
+        async with storage_repository:
+            for path, item in walk(DIRECTORY):
+                if isinstance(item, DirectorySchema):
+                    assert await storage_repository.is_dir(path)
+                else:
+                    assert not await storage_repository.is_dir(path)
 
     @staticmethod
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
@@ -101,9 +105,10 @@ class TestStorageRepositories:
         """
         Тестируем метод `read`.
         """
-        for path, item in walk(DIRECTORY):
-            if isinstance(item, FileSchema):
-                assert await storage_repository.read(path) == item.content
+        async with storage_repository:
+            for path, item in walk(DIRECTORY):
+                if isinstance(item, FileSchema):
+                    assert await storage_repository.read(path) == item.content
 
     @staticmethod
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
@@ -111,15 +116,28 @@ class TestStorageRepositories:
         """
         Тестируем метод `stream_read`.
         """
-        for path, item in walk(DIRECTORY):
-            if isinstance(item, FileSchema):
-                actual_content = b''
-                async with storage_repository.stream_read(path) as reader:
-                    async for chunk in reader:
-                        actual_content += chunk
-                assert actual_content == item.content
-                async with storage_repository.stream_read(path) as reader:
-                    assert await reader.read(5) == item.content[:5]
+        async with storage_repository:
+            for path, item in walk(DIRECTORY):
+                if isinstance(item, FileSchema):
+                    actual_content = b''
+                    async with storage_repository.stream_read(path) as reader:
+                        async for chunk in reader:
+                            actual_content += chunk
+                    assert actual_content == item.content
+                    async with storage_repository.stream_read(path) as reader:
+                        assert await reader.read(5) == item.content[:5]
+
+    @staticmethod
+    @pytest.mark.parametrize('walk', [walk_str, walk_path])
+    async def test_straming_read(storage_repository: StorageRepositoryProtocol, walk: WALK_TYPE) -> None:
+        """
+        Тестируем метод `straming_read`.
+        """
+        async with storage_repository:
+            for path, item in walk(DIRECTORY):
+                if isinstance(item, FileSchema):
+                    actual_content = b''.join([chunk async for chunk in storage_repository.straming_read(path)])
+                    assert actual_content == item.content
 
     @classmethod
     @pytest.mark.parametrize('new_file', [NEW_FILE, Path(NEW_FILE)])
@@ -127,11 +145,12 @@ class TestStorageRepositories:
         """
         Тестируем метод `write`.
         """
-        assert not await storage_repository.exists(new_file)
-        for content in NEW_FILE_CONTENTS:
-            await storage_repository.write(new_file, content)
-            assert await storage_repository.read(new_file) == content.encode()
-        await storage_repository.delete(new_file)
+        async with storage_repository:
+            assert not await storage_repository.exists(new_file)
+            for content in NEW_FILE_CONTENTS:
+                await storage_repository.write(new_file, content)
+                assert await storage_repository.read(new_file) == content.encode()
+            await storage_repository.delete(new_file)
 
     @classmethod
     @pytest.mark.parametrize('new_file', [NEW_FILE, Path(NEW_FILE)])
@@ -139,16 +158,16 @@ class TestStorageRepositories:
         """
         Тестируем метод `stream_write`.
         """
-        assert not await storage_repository.exists(new_file)
-        for content in NEW_FILE_CONTENTS:
-            encoded_content = content.encode()
-            await storage_repository.stream_write(
-                new_file,
-                cast(StreamReadProtocol, io.BytesIO(encoded_content)),
-                len(encoded_content),
-            )
-            assert await storage_repository.read(new_file) == encoded_content
-        await storage_repository.delete(new_file)
+        async with storage_repository:
+            assert not await storage_repository.exists(new_file)
+            for content in NEW_FILE_CONTENTS:
+                encoded_content = content.encode()
+                await storage_repository.stream_write(
+                    new_file,
+                    cast(StreamReadProtocol, io.BytesIO(encoded_content)),
+                )
+                assert await storage_repository.read(new_file) == encoded_content
+            await storage_repository.delete(new_file)
 
     @staticmethod
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
@@ -156,8 +175,9 @@ class TestStorageRepositories:
         """
         Тестируем метод `delete`.
         """
-        for path, item in walk(DIRECTORY):
-            if isinstance(item, FileSchema):
-                assert await storage_repository.exists(path)
-                await storage_repository.delete(path)
-                assert not await storage_repository.exists(path)
+        async with storage_repository:
+            for path, item in walk(DIRECTORY):
+                if isinstance(item, FileSchema):
+                    assert await storage_repository.exists(path)
+                    await storage_repository.delete(path)
+                    assert not await storage_repository.exists(path)

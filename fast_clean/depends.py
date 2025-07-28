@@ -81,18 +81,14 @@ class CoreProvider(Provider):
     Провайдер зависимостей.
     """
 
-    scope = Scope.REQUEST
+    scope = Scope.APP
 
     # --- repositories ---
 
-    settings_repository_factory = provide(
-        SettingsRepositoryFactoryImpl, provides=SettingsRepositoryFactoryProtocol, scope=Scope.APP
-    )
-    storage_repository_factory = provide(
-        StorageRepositoryFactoryImpl, provides=StorageRepositoryFactoryProtocol, scope=Scope.APP
-    )
+    settings_repository_factory = provide(SettingsRepositoryFactoryImpl, provides=SettingsRepositoryFactoryProtocol)
+    storage_repository_factory = provide(StorageRepositoryFactoryImpl, provides=StorageRepositoryFactoryProtocol)
 
-    @provide(scope=Scope.APP)
+    @provide
     @staticmethod
     async def get_settings_repository(
         settings_repository_factory: SettingsRepositoryFactoryProtocol,
@@ -102,7 +98,7 @@ class CoreProvider(Provider):
         """
         return await settings_repository_factory.make(SettingsSourceEnum.ENV)
 
-    @provide(scope=Scope.APP)
+    @provide
     @staticmethod
     async def get_settings(settings_repository: SettingsRepositoryProtocol) -> CoreSettingsSchema:
         """
@@ -118,7 +114,7 @@ class CoreProvider(Provider):
         kafka_settings = await settings_repository.get(CoreKafkaSettingsSchema)
         yield BrokerFactory.make_static(kafka_settings)
 
-    @provide(scope=Scope.APP)
+    @provide
     @staticmethod
     async def get_cache_repository(settings_repository: SettingsRepositoryProtocol) -> CacheRepositoryProtocol:
         """
@@ -127,25 +123,29 @@ class CoreProvider(Provider):
         cache_settings = await settings_repository.get(CoreCacheSettingsSchema)
         return CacheManager.init(cache_settings)
 
-    @provide(scope=Scope.APP)
+    @provide(scope=Scope.REQUEST)
     @staticmethod
     async def get_storage_repository(
         settings_repository: SettingsRepositoryProtocol,
         storage_repository_factory: StorageRepositoryFactoryProtocol,
-    ) -> StorageRepositoryProtocol:
+    ) -> AsyncIterator[StorageRepositoryProtocol]:
         """
         Получаем репозиторий файлового хранилища.
         """
         storage_settings = await settings_repository.get(CoreStorageSettingsSchema)
         if storage_settings.provider == 's3' and storage_settings.s3 is not None:
-            return await storage_repository_factory.make(
+            storage_repository = await storage_repository_factory.make(
                 StorageTypeEnum.S3,
                 S3StorageParamsSchema.model_validate(storage_settings.s3.model_dump()),
             )
-        elif storage_settings.provider == 'local' and storage_settings.dir is not None:
-            return await storage_repository_factory.make(
+            async with storage_repository:
+                yield storage_repository
+        elif storage_settings.provider == 'local':
+            storage_repository = await storage_repository_factory.make(
                 StorageTypeEnum.LOCAL, LocalStorageParamsSchema(path=storage_settings.dir)
             )
+            async with storage_repository:
+                yield storage_repository
         raise NotImplementedError(f'Storage {storage_settings.provider} not allowed')
 
     # --- db ---
@@ -156,7 +156,8 @@ class CoreProvider(Provider):
         """
         Получаем асинхронную сессию.
         """
-        async with SessionFactory.make_async_session_static(settings_repository) as session:
+        session_maker = await SessionFactory.make_async_session_dynamic(settings_repository)
+        async with session_maker() as session:
             yield session
 
     @provide
@@ -172,7 +173,7 @@ class CoreProvider(Provider):
     seed_service = provide(SeedService)
     transaction_service = provide(TransactionService)
 
-    @provide(scope=Scope.APP)
+    @provide
     @staticmethod
     def get_cryptography_service_factory(settings: CoreSettingsSchema) -> CryptographyServiceFactory:
         """
@@ -180,7 +181,7 @@ class CoreProvider(Provider):
         """
         return CryptographyServiceFactory(settings.secret_key)
 
-    @provide(scope=Scope.APP)
+    @provide
     @staticmethod
     async def get_cryptography_service(
         cryptography_service_factory: CryptographyServiceFactory,
@@ -190,7 +191,7 @@ class CoreProvider(Provider):
         """
         return await cryptography_service_factory.make(CryptographicAlgorithmEnum.AES_GCM)
 
-    @provide(scope=Scope.APP)
+    @provide
     @staticmethod
     def get_lock_service(cache_settings: CoreCacheSettingsSchema) -> LockServiceProtocol:
         """

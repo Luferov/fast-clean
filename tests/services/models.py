@@ -16,6 +16,8 @@ class SeedChildModel(BaseUUID):
     Дочерняя тестовая модель для тестирования загрузки данных из файлов.
     """
 
+    __tablename__ = 'seed_child_model'
+
     str_column: Mapped[str] = mapped_column(String(length=100), nullable=False)
     int_column: Mapped[int] = mapped_column(Integer, nullable=False)
 
@@ -28,6 +30,8 @@ class SeedParentModel(BaseUUID):
     """
     Родительская тестовая модель для тестирования загрузки данных из файлов.
     """
+
+    __tablename__ = 'seed_parent_model'
 
     str_column: Mapped[str] = mapped_column(String(length=100), nullable=False)
     int_column: Mapped[int] = mapped_column(Integer, nullable=False)

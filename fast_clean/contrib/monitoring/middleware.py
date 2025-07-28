@@ -3,4 +3,4 @@ from fastapi import FastAPI
 
 
 def use_middleware(app: FastAPI) -> None:
-    app.add_middleware(MetricsMiddleware)   # type: ignore
+    app.add_middleware(MetricsMiddleware)  # type: ignore
