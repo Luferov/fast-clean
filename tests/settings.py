@@ -3,10 +3,27 @@
 """
 
 from pathlib import Path
+from typing import Literal
 
 from fast_clean.settings import CoreDbSettingsSchema, CoreKafkaSettingsSchema, CoreS3SettingsSchema
 from pydantic import BaseModel, RedisDsn
 from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, SettingsConfigDict
+
+
+class CoreRedisSettingsSchema(BaseModel):
+    dsn: RedisDsn
+
+
+class CoreCacheSettingsSchema(BaseModel):
+    """
+    Схема настроек кеша.
+    """
+
+    provider: Literal['in_memory', 'redis'] = 'in_memory'
+
+    prefix: str
+
+    redis: CoreRedisSettingsSchema | None = None
 
 
 class StorageSettingsSchema(BaseModel):
@@ -26,10 +43,10 @@ class SettingsSchema(BaseSettings):
     base_dir: Path = Path(__file__).resolve().parent
     secret_key: str
 
-    redis_dsn: RedisDsn
     db: CoreDbSettingsSchema
     storage: StorageSettingsSchema
     kafka: CoreKafkaSettingsSchema
+    cache: CoreCacheSettingsSchema
 
     model_config = SettingsConfigDict(
         env_file='tests/.env',

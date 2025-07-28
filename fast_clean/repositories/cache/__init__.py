@@ -9,9 +9,9 @@
 from typing import ClassVar, Protocol, Self, cast
 
 from fastapi_cache import FastAPICache
+from redis import asyncio as aioredis
 
 from fast_clean.settings import CoreCacheSettingsSchema
-from redis import asyncio as aioredis
 
 from .in_memory import InMemoryCacheRepository as InMemoryCacheRepository
 from .redis import RedisCacheRepository as RedisCacheRepository
@@ -67,7 +67,7 @@ class CacheManager:
     cache_repository: ClassVar[CacheRepositoryProtocol | None] = None
 
     @classmethod
-    def init(cls, cache_settings: CoreCacheSettingsSchema, redis: aioredis.Redis | None) -> None:
+    def init(cls, cache_settings: CoreCacheSettingsSchema):
         """
         Инициализируем кеш.
         """
@@ -77,7 +77,13 @@ class CacheManager:
                 case 'in_memory':
                     cache_backend = InMemoryCacheRepository()
                 case 'redis':
-                    assert redis is not None
-                    cache_backend = RedisCacheRepository(redis)
+                    if not cache_settings.redis:
+                        raise ValueError('Redis not configured in settings')
+                    cache_backend = RedisCacheRepository(
+                        aioredis.from_url(url=str(cache_settings.redis.dsn), decode_responses=True)  # type: ignore
+                        )
+                case _:
+                    raise ValueError('Cache is not initialized')
             FastAPICache.init(cache_backend, prefix=cache_settings.prefix)
             cls.cache_repository = cast(CacheRepositoryProtocol, cache_backend)
+        return cls.cache_repository

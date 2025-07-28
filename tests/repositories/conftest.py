@@ -35,9 +35,9 @@ from fast_clean.repositories.storage import (
     S3StorageRepository,
     StorageRepositoryProtocol,
 )
+from redis import asyncio as aioredis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from redis import asyncio as aioredis
 from tests.settings import SettingsSchema
 
 from .enums import CrudModelTypeEnum
@@ -67,15 +67,23 @@ async def cache_repository(
                 await repository.set(k, v)
             yield cast(CacheRepositoryProtocol, repository)
         case 'redis':
-            redis_client = aioredis.from_url(url=str(settings.redis_dsn), decode_responses=True)
-            for k, v in data.items():
-                await redis_client.set(k, v)
+            if not settings.cache.redis:
+                pytest.skip('Redis not configured in settings')
+
+            redis_dsn = str(settings.cache.redis.dsn)
             try:
-                yield cast(CacheRepositoryProtocol, RedisCacheRepository(redis_client))
-            finally:
-                await redis_client.flushall()
-        case _:
-            raise NotImplementedError()
+                redis_client = aioredis.from_url(redis_dsn, decode_responses=True)
+                await redis_client.ping()
+            except Exception:
+                pytest.skip(f'Redis not available at {redis_dsn}')
+
+            if settings.cache.redis:
+                for k, v in data.items():
+                    await redis_client.set(k, v)
+                try:
+                    yield cast(CacheRepositoryProtocol, RedisCacheRepository(redis_client))
+                finally:
+                    await redis_client.flushall()
 
 
 @contextmanager

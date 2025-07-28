@@ -14,8 +14,8 @@ from fast_clean.services.cryptography import (
 from fast_clean.services.lock import LockServiceProtocol, RedisLockService
 from fast_clean.services.seed import SeedService
 from fast_clean.services.transaction import TransactionService
-
 from redis import asyncio as aioredis
+
 from tests.settings import SettingsSchema
 
 
@@ -38,7 +38,9 @@ def lock_service(settings: SettingsSchema) -> LockServiceProtocol:
     """
     Получаем сервис распределенной блокировки.
     """
-    return RedisLockService(aioredis.from_url(url=str(settings.redis_dsn), decode_responses=True))
+    if not settings.cache.redis:
+        pytest.skip('Redis not configured in settings')
+    return RedisLockService(aioredis.from_url(url=str(settings.cache.redis.dsn), decode_responses=True))  # type: ignore
 
 
 @pytest.fixture

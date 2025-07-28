@@ -1,11 +1,26 @@
 services:
+  devcontainer:
+    container_name: voiceai-core-devcontainer
+    image: mcr.microsoft.com/devcontainers/python:1-3.13-bullseye
+    volumes:
+      - ..:/workspaces:cached
+      - ~/.ssh:/home/vscode/.ssh:ro
+      - ~/.gitconfig:/home/vscode/.gitconfig:ro
+      - ~/.git-credentials:/home/vscode/.git-credentials:ro
+    command: sleep infinity
+    ports:
+      - 8000:8000
+      - 5678:5678
+    environment:
+      UV_LINK_MODE: copy
+
   postgres:
     container_name: voiceai-core-postgres
     image: postgres:16
     restart: unless-stopped
     environment:
       POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_PASSWORD: "12345678"
       POSTGRES_DB: "test"
     ports:
       - "5432:5432"
