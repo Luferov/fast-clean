@@ -81,7 +81,7 @@ class CacheManager:
                         raise ValueError('Redis not configured in settings')
                     cache_backend = RedisCacheRepository(
                         aioredis.from_url(url=str(cache_settings.redis.dsn), decode_responses=True)  # type: ignore
-                        )
+                    )
                 case _:
                     raise ValueError('Cache is not initialized')
             FastAPICache.init(cache_backend, prefix=cache_settings.prefix)
