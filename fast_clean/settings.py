@@ -39,6 +39,10 @@ class CoreDbSettingsSchema(BaseModel):
         return f'{self.provider}://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}'
 
 
+class CoreRedisSettingsSchema(BaseModel):
+    dsn: RedisDsn
+
+
 class CoreCacheSettingsSchema(BaseModel):
     """
     Схема настроек кеша.
@@ -47,6 +51,8 @@ class CoreCacheSettingsSchema(BaseModel):
     provider: Literal['in_memory', 'redis'] = 'in_memory'
 
     prefix: str
+
+    redis: CoreRedisSettingsSchema | None = None
 
 
 class CoreS3SettingsSchema(BaseModel):
@@ -178,7 +184,6 @@ class CoreSettingsSchema(BaseSettingsSchema):
     base_dir: Path = Path(os.getcwd())
     secret_key: str
     cors_origins: Annotated[list[str], Field(default_factory=list)]
-    redis_dsn: RedisDsn | None = None
     sentry_dsn: str | None = None
 
     model_config = SettingsConfigDict(

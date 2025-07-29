@@ -6,9 +6,10 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import AsyncContextManager, Protocol
 
-from fast_clean.exceptions import LockError
 from redis import asyncio as aioredis
 from redis.exceptions import LockError as AIORedisLockError
+
+from fast_clean.exceptions import LockError
 
 
 class LockServiceProtocol(Protocol):

@@ -16,7 +16,6 @@ from stringcase import snakecase
 
 from .broker import BrokerFactory
 from .db import SessionFactory, SessionManagerImpl, SessionManagerProtocol
-from .redis import RedisManager
 from .repositories import (
     CacheManager,
     CacheRepositoryProtocol,
@@ -121,15 +120,8 @@ class CoreProvider(Provider):
         """
         Получаем репозиторий кеша.
         """
-        settings = await settings_repository.get(CoreSettingsSchema)
-        if settings.redis_dsn is not None:
-            RedisManager.init(settings.redis_dsn)
         cache_settings = await settings_repository.get(CoreCacheSettingsSchema)
-        if CacheManager.cache_repository is None:
-            CacheManager.init(cache_settings, RedisManager.redis)
-        if CacheManager.cache_repository is not None:
-            return CacheManager.cache_repository
-        raise ValueError('Cache is not initialized')
+        return CacheManager.init(cache_settings)
 
     @provide(scope=Scope.REQUEST)
     @staticmethod
@@ -201,14 +193,12 @@ class CoreProvider(Provider):
 
     @provide
     @staticmethod
-    def get_lock_service(settings: CoreSettingsSchema) -> LockServiceProtocol:
+    def get_lock_service(cache_settings: CoreCacheSettingsSchema) -> LockServiceProtocol:
         """
         Получаем сервис распределенной блокировки.
         """
-        assert settings.redis_dsn is not None
-        RedisManager.init(settings.redis_dsn)
-        assert RedisManager.redis is not None
-        return RedisLockService(RedisManager.redis)
+        redis_client = CacheManager.init(cache_settings)
+        return RedisLockService(redis_client)  # type: ignore
 
 
 provider = CoreProvider()

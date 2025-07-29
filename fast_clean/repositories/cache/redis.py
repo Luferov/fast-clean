@@ -6,7 +6,6 @@ from typing import Self
 
 from fastapi_cache.backends.redis import RedisBackend
 from overrides import override
-
 from redis.asyncio.client import Redis
 
 
