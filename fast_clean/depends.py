@@ -106,6 +106,14 @@ class CoreProvider(Provider):
         """
         return await settings_repository.get(CoreSettingsSchema)
 
+    @provide
+    @staticmethod
+    async def get_cache_settings(settings_repository: SettingsRepositoryProtocol) -> CoreCacheSettingsSchema:
+        """
+        Получаем настройки кеша.
+        """
+        return await settings_repository.get(CoreCacheSettingsSchema)
+
     @staticmethod
     async def get_broker_repository(settings_repository: SettingsRepositoryProtocol) -> AsyncIterator[KafkaBroker]:
         """
