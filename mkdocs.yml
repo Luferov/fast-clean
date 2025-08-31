@@ -1,0 +1,118 @@
+site_name: FastAPI clean architecture implementation
+site_url: https://luferov.github.io/fast-clean/
+repo_url: https://github.com/Luferov/fast-clean
+repo_name: docs
+
+theme:
+  name: material
+  custom_dir: docs/_theme/overrides
+  palette:
+    # auto mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light theme
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: pink
+      accent: white
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark theme
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: pink
+      accent: black
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name:
+          Switch to auto (OS settings)
+  language: ru
+  features:
+    - header.autohide
+    - navigation.path
+    - navigation.footer
+    - toc.integrate
+    - content.action.edit
+    - content.code.annotate
+    - content.code.select
+    - content.code.copy
+    - announce.dismiss
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil-plus
+    view: material/eye
+
+extra_css:
+  - _theme/style.css
+
+extra:
+  generator: false
+
+plugins:
+  - search
+  - awesome-nav
+  - toggle-sidebar:
+      toggle_button: all
+  - autorefs
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [fast_clean]
+          inventories:
+          - https://docs.python.org/3/objects.inv
+          - https://mkdocstrings.github.io/objects.inv
+          - https://mkdocstrings.github.io/autorefs/objects.inv
+          - https://mkdocstrings.github.io/griffe/objects.inv
+          - https://python-markdown.github.io/objects.inv
+          options:
+            backlinks: tree
+            docstring_options:
+              ignore_init_summary: true
+            docstring_section_style: list
+            filters: public
+            heading_level: 1
+            inherited_members: true
+            line_length: 88
+            merge_init_into_class: true
+            parameter_headings: true
+            preload_modules: [mkdocstrings]
+            relative_crossrefs: true
+            scoped_crossrefs: true
+            separate_signature: true
+            show_bases: false
+            show_inheritance_diagram: true
+            show_root_heading: true
+            show_root_full_path: false
+            show_signature_annotations: true
+            show_source: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            signature_crossrefs: true
+            summary: true
+            unwrap_annotated: true
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+      separator: "_"
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.mark
+  - pymdownx.caret
+  - pymdownx.tilde
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true

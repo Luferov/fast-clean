@@ -49,6 +49,11 @@ dev = [
     "types-sqlalchemy-utils>=1.1.0",
     "types-aiobotocore[support]>=2.23.0",
     "types-sqlalchemy-utils>=1.1.0",
+    "mkdocs>=1.6.1",
+    "mkdocs-awesome-nav>=3.1.2",
+    "mkdocs-material>=9.6.15",
+    "mkdocs-toggle-sidebar-plugin>=0.0.6",
+    "mkdocstrings[python]>=0.30.0",
 ]
 
 [tool.ruff.format]
