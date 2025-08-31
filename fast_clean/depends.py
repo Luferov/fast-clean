@@ -10,7 +10,7 @@ from dishka import Provider, Scope, provide
 from fastapi import Depends, Request
 from faststream.kafka import KafkaBroker
 from flatten_dict import unflatten
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from starlette.datastructures import FormData
 from stringcase import snakecase
 
@@ -81,14 +81,18 @@ class CoreProvider(Provider):
     Провайдер зависимостей.
     """
 
-    scope = Scope.APP
+    scope = Scope.REQUEST
 
     # --- repositories ---
 
-    settings_repository_factory = provide(SettingsRepositoryFactoryImpl, provides=SettingsRepositoryFactoryProtocol)
-    storage_repository_factory = provide(StorageRepositoryFactoryImpl, provides=StorageRepositoryFactoryProtocol)
+    settings_repository_factory = provide(
+        SettingsRepositoryFactoryImpl, provides=SettingsRepositoryFactoryProtocol, scope=Scope.APP
+    )
+    storage_repository_factory = provide(
+        StorageRepositoryFactoryImpl, provides=StorageRepositoryFactoryProtocol, scope=Scope.APP
+    )
 
-    @provide
+    @provide(scope=Scope.APP)
     @staticmethod
     async def get_settings_repository(
         settings_repository_factory: SettingsRepositoryFactoryProtocol,
@@ -98,7 +102,7 @@ class CoreProvider(Provider):
         """
         return await settings_repository_factory.make(SettingsSourceEnum.ENV)
 
-    @provide
+    @provide(scope=Scope.APP)
     @staticmethod
     async def get_settings(settings_repository: SettingsRepositoryProtocol) -> CoreSettingsSchema:
         """
@@ -106,7 +110,7 @@ class CoreProvider(Provider):
         """
         return await settings_repository.get(CoreSettingsSchema)
 
-    @provide
+    @provide(scope=Scope.APP)
     @staticmethod
     async def get_cache_settings(settings_repository: SettingsRepositoryProtocol) -> CoreCacheSettingsSchema:
         """
@@ -114,6 +118,7 @@ class CoreProvider(Provider):
         """
         return await settings_repository.get(CoreCacheSettingsSchema)
 
+    @provide
     @staticmethod
     async def get_broker_repository(settings_repository: SettingsRepositoryProtocol) -> AsyncIterator[KafkaBroker]:
         """
@@ -122,7 +127,7 @@ class CoreProvider(Provider):
         kafka_settings = await settings_repository.get(CoreKafkaSettingsSchema)
         yield BrokerFactory.make_static(kafka_settings)
 
-    @provide
+    @provide(scope=Scope.APP)
     @staticmethod
     async def get_cache_repository(settings_repository: SettingsRepositoryProtocol) -> CacheRepositoryProtocol:
         """
@@ -131,7 +136,7 @@ class CoreProvider(Provider):
         cache_settings = await settings_repository.get(CoreCacheSettingsSchema)
         return CacheManager.init(cache_settings)
 
-    @provide(scope=Scope.REQUEST)
+    @provide
     @staticmethod
     async def get_storage_repository(
         settings_repository: SettingsRepositoryProtocol,
@@ -158,13 +163,19 @@ class CoreProvider(Provider):
 
     # --- db ---
 
+    @provide(scope=Scope.APP)
+    @staticmethod
+    async def get_async_sessionmaker(
+        settings_repository: SettingsRepositoryProtocol,
+    ) -> async_sessionmaker[AsyncSession]:
+        return await SessionFactory.make_async_session_dynamic(settings_repository)
+
     @provide
     @staticmethod
-    async def get_async_session(settings_repository: SettingsRepositoryProtocol) -> AsyncIterator[AsyncSession]:
+    async def get_async_session(session_maker: async_sessionmaker[AsyncSession]) -> AsyncIterator[AsyncSession]:
         """
         Получаем асинхронную сессию.
         """
-        session_maker = await SessionFactory.make_async_session_dynamic(settings_repository)
         async with session_maker() as session:
             yield session
 
@@ -178,10 +189,10 @@ class CoreProvider(Provider):
 
     # --- services ---
 
-    seed_service = provide(SeedService)
+    seed_service = provide(SeedService, scope=Scope.APP)
     transaction_service = provide(TransactionService)
 
-    @provide
+    @provide(scope=Scope.APP)
     @staticmethod
     def get_cryptography_service_factory(settings: CoreSettingsSchema) -> CryptographyServiceFactory:
         """
@@ -199,7 +210,7 @@ class CoreProvider(Provider):
         """
         return await cryptography_service_factory.make(CryptographicAlgorithmEnum.AES_GCM)
 
-    @provide
+    @provide(scope=Scope.APP)
     @staticmethod
     def get_lock_service(cache_settings: CoreCacheSettingsSchema) -> LockServiceProtocol:
         """
