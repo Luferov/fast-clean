@@ -159,7 +159,8 @@ class CoreProvider(Provider):
             )
             async with storage_repository:
                 yield storage_repository
-        raise NotImplementedError(f'Storage {storage_settings.provider} not allowed')
+        else:
+            raise NotImplementedError(f'Storage {storage_settings.provider} not allowed')
 
     # --- db ---
 
@@ -189,7 +190,7 @@ class CoreProvider(Provider):
 
     # --- services ---
 
-    seed_service = provide(SeedService, scope=Scope.APP)
+    seed_service = provide(SeedService, scope=Scope.REQUEST)
     transaction_service = provide(TransactionService)
 
     @provide(scope=Scope.APP)
