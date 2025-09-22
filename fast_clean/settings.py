@@ -61,8 +61,9 @@ class CoreS3SettingsSchema(BaseModel):
     """
 
     endpoint: str
-    aws_access_key_id: str
-    aws_secret_access_key: str
+    endpoint_url: str
+    access_key_id: str
+    secret_access_key: str
     port: int
     bucket: str
     secure: bool = False
