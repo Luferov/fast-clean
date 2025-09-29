@@ -160,7 +160,7 @@ class CoreProvider(Provider):
             async with storage_repository:
                 yield storage_repository
         else:
-            raise NotImplementedError(f'Storage {storage_settings.provider} not allowed')
+            raise NotImplementedError(f'Storage {storage_settings.provider} is not allowed')
 
     # --- db ---
 
