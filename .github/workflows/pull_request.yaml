@@ -26,6 +26,7 @@ jobs:
         run: uv run pre-commit run --all-files
   test:
     name: Test
+    needs: [lint]
     runs-on: ubuntu-latest
     services:
       postgres:

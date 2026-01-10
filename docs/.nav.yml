@@ -1,0 +1,4 @@
+nav:
+  - "*"
+  - "Layered Architecture Implementation Library": "https://github.com/Luferov/fast-clean"
+  - "Example": "https://github.com/Luferov/fastapi-boilerplate"

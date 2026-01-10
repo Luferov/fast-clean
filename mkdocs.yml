@@ -1,0 +1,86 @@
+site_name: Implementation of layered architecture
+site_url: https://luferov.github.io/fast-clean/
+repo_url: https://github.com/Luferov/fast-clean
+repo_name: docs
+
+theme:
+  name: material
+  custom_dir: docs/_theme/overrides
+  palette:
+    # auto mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light theme
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: pink
+      accent: white
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark theme
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: pink
+      accent: black
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name:
+          Switch to auto (OS settings)
+  language: ru
+  features:
+    - header.autohide
+    - navigation.path
+    - navigation.footer
+    - toc.integrate
+    - content.action.edit
+    - content.code.annotate
+    - content.code.select
+    - content.code.copy
+    - announce.dismiss
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil-plus
+    view: material/eye
+
+extra_css:
+  - _theme/style.css
+
+extra:
+  generator: false
+
+plugins:
+  - search
+  - mermaid2
+  - awesome-nav
+  - toggle-sidebar:
+      toggle_button: all
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+      separator: "_"
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.mark
+  - pymdownx.caret
+  - pymdownx.tilde
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: "!!python/name:mermaid2.fence_mermaid"
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true

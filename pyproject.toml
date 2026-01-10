@@ -1,7 +1,7 @@
 [project]
 name = "fast-clean"
 version = "1.5.0"
-description = "FastAPI Clean Architecture implementation"
+description = "Implementation of layered architecture"
 readme = "README.md"
 requires-python = ">=3.13"
 authors = [
@@ -51,6 +51,14 @@ dev = [
     "types-sqlalchemy-utils>=1.1.0",
     "types-aiobotocore[support]>=2.23.0",
     "types-sqlalchemy-utils>=1.1.0",
+]
+
+docs = [
+    "mkdocs>=1.6.1",
+    "mkdocs-awesome-nav>=3.1.2",
+    "mkdocs-material>=9.6.15",
+    "mkdocs-mermaid2-plugin>=1.2.3",
+    "mkdocs-toggle-sidebar-plugin>=0.0.6",
 ]
 
 
