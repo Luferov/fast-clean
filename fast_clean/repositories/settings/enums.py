@@ -1,5 +1,5 @@
 """
-Модуль, содержащий перечисления репозитория настроек.
+Module containing settings repository enums.
 """
 
 from enum import StrEnum, auto
@@ -7,10 +7,10 @@ from enum import StrEnum, auto
 
 class SettingsSourceEnum(StrEnum):
     """
-    Источник настроек.
+    Settings source.
     """
 
     ENV = auto()
     """
-    Настройки, получаемые из переменных окружения.
+    Settings obtained from environment variables.
     """

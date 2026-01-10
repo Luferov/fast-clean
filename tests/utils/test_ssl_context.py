@@ -1,12 +1,13 @@
 """
-Модуль, содержащий тесты создания SSL контекста.
+Module containing tests for SSL context creation.
 """
 
 import ssl
 
 import pytest
-from fast_clean.utils.ssl_context import CertificateSchema, make_ssl_context
 from pytest_mock import MockFixture
+
+from fast_clean.utils.ssl_context import CertificateSchema, make_ssl_context
 
 
 @pytest.mark.parametrize(
@@ -15,7 +16,7 @@ from pytest_mock import MockFixture
 )
 def test_make_ssl_context(mocker: MockFixture, check_hostname: bool) -> None:
     """
-    Тестируем функцию `make_ssl_context`.
+    Test the `make_ssl_context` function.
     """
     params = CertificateSchema(
         ca_file='path/to/ca.pem',

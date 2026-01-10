@@ -1,7 +1,7 @@
 """
-Пакет, содержащий репозиторий кеша.
+Package containing the cache repository.
 
-Представлено две реализации:
+Two implementations are provided:
 - InMemory
 - Redis
 """
@@ -19,57 +19,57 @@ from .redis import RedisCacheRepository as RedisCacheRepository
 
 class CacheRepositoryProtocol(Protocol):
     """
-    Протокол репозитория кеша.
+    Cache repository protocol.
     """
 
     async def get(self: Self, key: str) -> str | None:
         """
-        Получаем значение.
+        Get a value.
         """
         ...
 
     async def set(self: Self, key: str, value: str, expire: int | None = None, nx: bool = False) -> None:
         """
-        Устанавливаем значение.
+        Set a value.
         """
         ...
 
     async def get_with_ttl(self: Self, key: str) -> tuple[int, str | None]:
         """
-        Получаем значение со сроком жизни.
+        Get a value with a TTL.
         """
         ...
 
     async def incr(self: Self, key: str, amount: int = 1) -> int:
         """
-        Инкрементируем значения.
+        Increment values.
         """
         ...
 
     async def decr(self: Self, key: str, amount: int = 1) -> int:
         """
-        Декрементируем значения.
+        Decrement values.
         """
         ...
 
     async def clear(self: Self, namespace: str | None = None, key: str | None = None) -> int:
         """
-        Удаляем значение.
+        Delete a value.
         """
         ...
 
 
 class CacheManager:
     """
-    Менеджер для работы с репозиторием кеша.
+    Manager for working with the cache repository.
     """
 
     cache_repository: ClassVar[CacheRepositoryProtocol | None] = None
 
     @classmethod
-    def init(cls, cache_settings: CoreCacheSettingsSchema):
+    def init(cls, cache_settings: CoreCacheSettingsSchema, redis: aioredis.Redis | None) -> None:
         """
-        Инициализируем кеш.
+        Initialize the cache.
         """
         if cls.cache_repository is None:
             cache_backend: InMemoryCacheRepository | RedisCacheRepository
@@ -77,13 +77,7 @@ class CacheManager:
                 case 'in_memory':
                     cache_backend = InMemoryCacheRepository()
                 case 'redis':
-                    if not cache_settings.redis:
-                        raise ValueError('Redis not configured in settings')
-                    cache_backend = RedisCacheRepository(
-                        aioredis.from_url(url=str(cache_settings.redis.dsn), decode_responses=True)  # type: ignore
-                    )
-                case _:
-                    raise ValueError('Cache is not initialized')
+                    assert redis is not None
+                    cache_backend = RedisCacheRepository(redis)
             FastAPICache.init(cache_backend, prefix=cache_settings.prefix)
             cls.cache_repository = cast(CacheRepositoryProtocol, cache_backend)
-        return cls.cache_repository

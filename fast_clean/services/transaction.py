@@ -1,5 +1,5 @@
 """
-Модуль, содержащий сервис транзакций.
+Module containing the transaction service.
 """
 
 from contextlib import asynccontextmanager
@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 class TransactionService:
     """
-    Реализация сервиса транзакций.
+    Transaction service implementation.
     """
 
     def __init__(self, session: AsyncSession) -> None:
@@ -20,7 +20,7 @@ class TransactionService:
     @asynccontextmanager
     async def begin(self, immediate: bool = True) -> AsyncIterator[None]:
         """
-        Начинаем транзакцию.
+        Start a transaction.
         """
         async with self.session.begin():
             if immediate:

@@ -1,5 +1,5 @@
 """
-Модуль, содержащий схемы пагинации.
+Module containing pagination schemas.
 """
 
 from __future__ import annotations
@@ -8,12 +8,12 @@ from typing import Generic, Self, TypeVar
 
 from pydantic import BaseModel, Field
 
-from .request_response import ResponseSchema
+from .request_response import RequestResponseSchema
 
 
 class PaginationRequestSchema(BaseModel):
     """
-    Схема запроса пагинации.
+    Pagination request schema.
     """
 
     page: int = Field(gt=0)
@@ -21,14 +21,14 @@ class PaginationRequestSchema(BaseModel):
 
     def to_pagination_schema(self: Self) -> PaginationSchema:
         """
-        Преобразуем к схеме пагинации с помощью limit и offset.
+        Convert to a pagination schema using limit and offset.
         """
         return PaginationSchema(limit=self.page_size, offset=(self.page - 1) * self.page_size)
 
 
-class AppliedPaginationResponseSchema(ResponseSchema):
+class AppliedPaginationResponseSchema(RequestResponseSchema):
     """
-    Схема ответа примененной пагинации.
+    Applied pagination response schema.
     """
 
     page: int
@@ -36,9 +36,9 @@ class AppliedPaginationResponseSchema(ResponseSchema):
     count: int
 
 
-class PaginationResponseSchema(ResponseSchema):
+class PaginationResponseSchema(RequestResponseSchema):
     """
-    Схема ответа пагинации.
+    Pagination response schema.
     """
 
     pagination: AppliedPaginationResponseSchema
@@ -46,7 +46,7 @@ class PaginationResponseSchema(ResponseSchema):
 
 class PaginationSchema(BaseModel):
     """
-    Схема пагинации с помощью limit и offset.
+    Pagination schema using limit and offset.
     """
 
     limit: int
@@ -58,7 +58,7 @@ T = TypeVar('T')
 
 class PaginationResultSchema(BaseModel, Generic[T]):
     """
-    Схема результата пагинации.
+    Pagination result schema.
     """
 
     objects: list[T]

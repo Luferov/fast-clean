@@ -1,5 +1,5 @@
 """
-Модуль, содержащий сервис для загрузки данных из файлов.
+Module containing the service for loading data from files.
 """
 
 import importlib
@@ -17,7 +17,7 @@ from ..db import SessionManagerProtocol
 
 class SeedService:
     """
-    Реализация сервиса для загрузки данных из файлов.
+    Service implementation for loading data from files.
     """
 
     def __init__(self, session_manager: SessionManagerProtocol) -> None:
@@ -25,7 +25,7 @@ class SeedService:
 
     async def load_data(self, directory: str | Path | None = None) -> None:
         """
-        Загружаем данные из файлов по пути.
+        Load data from files by path.
         """
         directory = directory if directory is not None else self.find_directory()
         directory = Path(directory) if isinstance(directory, str) else directory
@@ -40,7 +40,7 @@ class SeedService:
     @staticmethod
     def find_directory() -> Path:
         """
-        Ищем директорию с файлами для загрузки.
+        Find the directory with files to load.
         """
         cwd = Path(os.getcwd())
         virtual_env_paths = {path.parent for path in cwd.rglob('pyvenv.cfg')}
@@ -52,7 +52,7 @@ class SeedService:
     @classmethod
     async def upsert_item(cls, item: Any, session: AsyncSession) -> None:
         """
-        Сохраняем запись в базу данных.
+        Save the record to the database.
         """
         model_type = cls.import_from_string(item['model'])
         primary_keys = {key.name for key in cast(Any, sa.inspect(model_type)).primary_key}
@@ -72,7 +72,7 @@ class SeedService:
     @staticmethod
     def import_from_string(import_str: str) -> sa.TableClause:
         """
-        Импортируем таблицу.
+        Import a table.
         """
         package_name, model_name = import_str.rsplit('.', maxsplit=1)
         package = importlib.import_module(package_name)

@@ -1,5 +1,5 @@
 """
-Модель, содержащий тесты запуска тяжелых операций в ThreadPoolExecutor.
+Model containing tests for running heavy operations in ThreadPoolExecutor.
 """
 
 import asyncio
@@ -10,14 +10,14 @@ from fast_clean.utils.thread import run_in_threadpool
 
 def add(a: int, b: int) -> int:
     """
-    Тестовая функция сложения аргументов.
+    Test function for adding arguments.
     """
     return a + b
 
 
 async def test_run_in_threadpool() -> None:
     """
-    Тестируем функцию `run_in_threadpool`.
+    Test the `run_in_threadpool` function.
     """
     loop = asyncio.get_running_loop()
     executor = ThreadPoolExecutor()

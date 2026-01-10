@@ -3,7 +3,7 @@ from enum import StrEnum, auto
 
 class EnvironmentEnum(StrEnum):
     """
-    Окружения
+    Environments
     """
 
     DEVELOPMENT = auto()

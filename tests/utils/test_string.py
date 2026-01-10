@@ -1,5 +1,5 @@
 """
-Модуль, содержащий тесты работы со строками.
+Module containing string utility tests.
 """
 
 import string
@@ -9,7 +9,7 @@ from fast_clean.utils.string import decode_base64, encode_base64, make_random_st
 
 def test_make_random_string() -> None:
     """
-    Тестируем функцию `make_random_string`.
+    Test the `make_random_string` function.
     """
     random_string = make_random_string(10)
     assert len(random_string) == 10
@@ -19,13 +19,13 @@ def test_make_random_string() -> None:
 
 def test_encode_base64() -> None:
     """
-    Тестируем функцию `encode_base64`.
+    Test the `encode_base64` function.
     """
     assert encode_base64('~string!') == 'fnN0cmluZyE='
 
 
 def test_decode_base64() -> None:
     """
-    Тестируем функцию `decode_base64`.
+    Test the `decode_base64` function.
     """
     assert decode_base64('fnN0cmluZyE=') == '~string!'

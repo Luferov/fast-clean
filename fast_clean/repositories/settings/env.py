@@ -1,5 +1,5 @@
 """
-Модуль, содержащий репозиторий настроек, получаемых из переменных окружения.
+Module containing the settings repository sourced from environment variables.
 """
 
 from typing import Self
@@ -12,7 +12,7 @@ from .type_vars import SettingsSchema
 
 class EnvSettingsRepository:
     """
-    Репозиторий настроек, получаемых из переменных окружения.
+    Settings repository sourced from environment variables.
     """
 
     SETTINGS_MODULE = 'settings'
@@ -21,7 +21,7 @@ class EnvSettingsRepository:
 
     async def get(self: Self, schema_type: type[SettingsSchema], *, name: str | None = None) -> SettingsSchema:
         """
-        Получаем настройки из переменных окружения.
+        Get settings from environment variables.
         """
         if self.settings is None:
             self.settings = [st() for st in BaseSettingsSchema.descendant_types if st is not CoreSettingsSchema]
@@ -31,7 +31,7 @@ class EnvSettingsRepository:
 
     def get_by_name(self: Self, schema_type: type[SettingsSchema], name: str) -> SettingsSchema:
         """
-        Получаем настройки по имени.
+        Get settings by name.
         """
         assert self.settings
         for settings in self.settings:
@@ -42,7 +42,7 @@ class EnvSettingsRepository:
 
     def get_by_type(self: Self, schema_type: type[SettingsSchema]) -> SettingsSchema:
         """
-        Получаем настройки по типу.
+        Get settings by type.
         """
         assert self.settings
         for settings in self.settings:

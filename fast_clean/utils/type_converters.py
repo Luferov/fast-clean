@@ -1,5 +1,5 @@
 """
-Модуль, содержащий функции для преобразования типов.
+Module containing type conversion functions.
 """
 
 true_set = {'yes', 'true', 't', 'y', '1'}
@@ -8,7 +8,7 @@ false_set = {'no', 'false', 'f', 'n', '0'}
 
 def str_to_bool(value: str) -> bool:
     """
-    Преобразуем строку к логическом значению.
+    Convert a string to a boolean value.
     """
     value = value.lower()
     if value in true_set:

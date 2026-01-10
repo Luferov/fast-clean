@@ -1,5 +1,5 @@
 """
-Модуль, содержащий перечисления файлового хранилища.
+Module containing file storage enums.
 """
 
 from enum import StrEnum, auto
@@ -7,14 +7,14 @@ from enum import StrEnum, auto
 
 class StorageTypeEnum(StrEnum):
     """
-    Тип хранилища.
+    Storage type.
     """
 
     S3 = auto()
     """
-    Хранилище S3.
+    S3 storage.
     """
     LOCAL = auto()
     """
-    Локальное файловое хранилище.
+    Local file storage.
     """

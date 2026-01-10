@@ -1,5 +1,5 @@
 """
-Модуль, содержащий вспомогательные функции для тестов.
+Module containing helper functions for tests.
 """
 
 from collections.abc import Iterator
@@ -12,7 +12,7 @@ def walk_path(
     directory: DirectorySchema, parent_path: Path | None = None
 ) -> Iterator[tuple[Path, DirectorySchema | FileSchema]]:
     """
-    Обходим директорию, возвращая пути в виде Path.
+    Traverse the directory, returning paths as Path.
     """
     parent_path = parent_path or Path('')
     directory_path = parent_path / directory.name
@@ -28,7 +28,7 @@ def walk_str(
     directory: DirectorySchema, parent_path: Path | None = None
 ) -> Iterator[tuple[str, DirectorySchema | FileSchema]]:
     """
-    Обходим директорию, возвращая пути в виде str.
+    Traverse the directory, returning paths as str.
     """
     for path, item in walk_path(directory, parent_path):
         yield '' if path == Path('') else str(path), item

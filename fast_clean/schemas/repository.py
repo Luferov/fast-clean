@@ -1,5 +1,5 @@
 """
-Модуль, содержащий схемы репозиториев.
+Module containing repository schemas.
 """
 
 import uuid
@@ -12,7 +12,7 @@ IdType = TypeVar('IdType')
 
 class CreateSchemaGeneric(BaseModel, Generic[IdType]):
     """
-    Схема для создания модели.
+    Schema for creating a model.
     """
 
     id: IdType | None = None
@@ -20,7 +20,7 @@ class CreateSchemaGeneric(BaseModel, Generic[IdType]):
 
 class ReadSchemaGeneric(BaseModel, Generic[IdType]):
     """
-    Схема для чтения модели.
+    Schema for reading a model.
     """
 
     id: IdType
@@ -28,7 +28,7 @@ class ReadSchemaGeneric(BaseModel, Generic[IdType]):
 
 class UpdateSchemaGeneric(BaseModel, Generic[IdType]):
     """
-    Схема для обновления модели.
+    Schema for updating a model.
     """
 
     id: IdType

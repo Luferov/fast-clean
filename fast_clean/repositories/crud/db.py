@@ -1,5 +1,5 @@
 """
-Модуль, содержащий репозиторий для выполнения CRUD операций над моделями в базе данных.
+Module containing the repository for CRUD operations on database models.
 """
 
 from __future__ import annotations
@@ -53,7 +53,7 @@ class DbCrudRepositoryBase(
     ]
 ):
     """
-    Базовый репозиторий для выполнения CRUD операций над моделями в базе данных.
+    Base repository for CRUD operations on database models.
     """
 
     __abstract__: bool = True
@@ -83,9 +83,9 @@ class DbCrudRepositoryBase(
 
     def __init_subclass__(cls) -> None:
         """
-        Инициализируем класс.
+        Initialize the class.
 
-        Получаем используемую модель SQLAlchemy и схему Pydantic из базового типа.
+        Get the SQLAlchemy model and Pydantic schema from the base type.
         """
         if cls.__dict__.get('__abstract__', False):
             return super().__init_subclass__()
@@ -134,7 +134,7 @@ class DbCrudRepositoryBase(
 
     async def get(self: Self, id: IdType) -> ReadSchemaBaseType:
         """
-        Получаем модель по идентификатору.
+        Get a model by identifier.
         """
         async with self.session_manager.get_session() as s:
             statement = self.select().where(self.model_type.id == id)
@@ -145,7 +145,7 @@ class DbCrudRepositoryBase(
 
     async def get_or_none(self: Self, id: IdType) -> ReadSchemaBaseType | None:
         """
-        Получаем модель или None по идентификатору.
+        Get a model or None by identifier.
         """
         with contextlib.suppress(ModelNotFoundError):
             return await self.get(id)
@@ -153,7 +153,7 @@ class DbCrudRepositoryBase(
 
     async def get_by_ids(self: Self, ids: Sequence[IdType], *, exact: bool = False) -> list[ReadSchemaBaseType]:
         """
-        Получаем список моделей по идентификаторам.
+        Get a list of models by identifiers.
         """
         async with self.session_manager.get_session() as s:
             statement = self.select().where(self.model_type.id.in_(ids))
@@ -163,7 +163,7 @@ class DbCrudRepositoryBase(
 
     async def get_all(self: Self) -> list[ReadSchemaBaseType]:
         """
-        Получаем все модели.
+        Get all models.
         """
         async with self.session_manager.get_session() as s:
             statement = self.select()
@@ -179,7 +179,7 @@ class DbCrudRepositoryBase(
         sorting: Iterable[str] | None = None,
     ) -> PaginationResultSchema[ReadSchemaBaseType]:
         """
-        Получаем список моделей с пагинацией, поиском и сортировкой.
+        Get a list of models with pagination, search, and sorting.
         """
         return await self.paginate_with_filter(
             pagination,
@@ -190,7 +190,7 @@ class DbCrudRepositoryBase(
 
     async def create(self: Self, create_object: CreateSchemaBaseType) -> ReadSchemaBaseType:
         """
-        Создаем модель.
+        Create a model.
         """
         async with self.session_manager.get_session() as s:
             try:
@@ -202,7 +202,7 @@ class DbCrudRepositoryBase(
 
     async def bulk_create(self: Self, create_objects: list[CreateSchemaBaseType]) -> list[ReadSchemaBaseType]:
         """
-        Создаем несколько моделей.
+        Create multiple models.
         """
         if len(create_objects) == 0:
             return []
@@ -220,7 +220,7 @@ class DbCrudRepositoryBase(
 
     async def update(self: Self, update_object: UpdateSchemaBaseType) -> ReadSchemaBaseType:
         """
-        Обновляем модель.
+        Update a model.
         """
         async with self.session_manager.get_session() as s:
             try:
@@ -232,7 +232,7 @@ class DbCrudRepositoryBase(
 
     async def bulk_update(self: Self, update_objects: list[UpdateSchemaBaseType]) -> None:
         """
-        Обновляем несколько моделей.
+        Update multiple models.
         """
         if len(update_objects) == 0:
             return
@@ -248,7 +248,7 @@ class DbCrudRepositoryBase(
 
     async def upsert(self: Self, create_object: CreateSchemaBaseType) -> ReadSchemaBaseType:
         """
-        Создаем или обновляем модель.
+        Create or update a model.
         """
         async with self.session_manager.get_session() as s:
             try:
@@ -260,7 +260,7 @@ class DbCrudRepositoryBase(
 
     async def delete(self: Self, ids: Sequence[IdType]) -> None:
         """
-        Удаляем модели.
+        Delete models.
         """
         if len(ids) == 0:
             return
@@ -285,7 +285,7 @@ class DbCrudRepositoryBase(
     @classmethod
     def select(cls) -> sa.Select[tuple[ModelBaseType]]:
         """
-        Выбираем базовую модели или наследника со всеми полями при наличии.
+        Select the base model or an inheritor with all fields if available.
         """
         statement = sa.select(cls.model_type)
         if cls.model_subtypes:
@@ -295,7 +295,7 @@ class DbCrudRepositoryBase(
     @classmethod
     def model_validate(cls, model: ModelBaseType) -> ReadSchemaBaseType:
         """
-        Приводим модель к схеме.
+        Convert the model to a schema.
         """
         read_schema_type = cls.model_types_mapping[type(model)]
         return cast(
@@ -304,11 +304,15 @@ class DbCrudRepositoryBase(
         )
 
     @classmethod
+    def models_validate(cls, models: sa.ScalarResult[ModelBaseType]) -> list[ReadSchemaBaseType]:
+        return [cls.model_validate(model) for model in models]
+
+    @classmethod
     async def bulk_create_with_model_type(
         cls, model_type: type[ModelBaseType], create_dicts: list[dict[str, Any]], session: AsyncSession
     ) -> list[ReadSchemaBaseType]:
         """
-        Создаем модели с помощью типа.
+        Create models using the type.
         """
         parent_dicts = await cls.bulk_create_parent_model(model_type, create_dicts, session)
         values: list[dict[str, Any]] = []
@@ -333,7 +337,7 @@ class DbCrudRepositoryBase(
         cls, model_type: type[ModelBaseType], create_dicts: list[dict[str, Any]], session: AsyncSession
     ) -> list[dict[str, Any]]:
         """
-        Создаем родительские модели с помощью типа.
+        Create parent models using the type.
         """
         parent_model_type = cls.get_parent_model_type(model_type)
         if parent_model_type is None:
@@ -347,7 +351,7 @@ class DbCrudRepositoryBase(
         cls, model_type: type[ModelBaseType], update_dict: dict[str, Any], session: AsyncSession
     ) -> ReadSchemaBaseType:
         """
-        Обновляем модель с помощью типа.
+        Update a model using the type.
         """
         parent_dict = await cls.update_parent_model(model_type, update_dict, session)
         statement = (
@@ -368,7 +372,7 @@ class DbCrudRepositoryBase(
         cls, model_type: type[ModelBaseType], update_dict: dict[str, Any], session: AsyncSession
     ) -> dict[str, Any]:
         """
-        Обновляем родительскую модель с помощью типа.
+        Update the parent model using the type.
         """
         parent_model_type = cls.get_parent_model_type(model_type)
         if parent_model_type is None:
@@ -380,7 +384,7 @@ class DbCrudRepositoryBase(
         cls, model_type: type[ModelBaseType], update_dicts: list[dict[str, Any]], session: AsyncSession
     ) -> None:
         """
-        Создаем модели с помощью типа.
+        Create models using the type.
         """
         await cls.bulk_update_parent_model(model_type, update_dicts, session)
         values: list[dict[str, Any]] = []
@@ -394,7 +398,7 @@ class DbCrudRepositoryBase(
         cls, model_type: type[ModelBaseType], update_dicts: list[dict[str, Any]], session: AsyncSession
     ) -> None:
         """
-        Обновляем родительские модели с помощью типа.
+        Update parent models using the type.
         """
         parent_model_type = cls.get_parent_model_type(model_type)
         if parent_model_type is not None:
@@ -405,7 +409,7 @@ class DbCrudRepositoryBase(
         cls, model_type: type[ModelBaseType], create_dict: dict[str, Any], session: AsyncSession
     ) -> ReadSchemaBaseType:
         """
-        Создаем или обновляем модель с помощью типа.
+        Create or update a model using the type.
         """
         parent_dict = await cls.upsert_parent_model(model_type, create_dict, session)
         primary_keys = {key.name for key in cast(Any, sa.inspect(model_type)).primary_key}
@@ -431,7 +435,7 @@ class DbCrudRepositoryBase(
         cls, model_type: type[ModelBaseType], create_dict: dict[str, Any], session: AsyncSession
     ) -> dict[str, Any]:
         """
-        Создаем или обновляем родительскую модель с помощью типа.
+        Create or update a parent model using the type.
         """
         parent_model_type = cls.get_parent_model_type(model_type)
         if parent_model_type is None:
@@ -441,7 +445,7 @@ class DbCrudRepositoryBase(
     @staticmethod
     def dump_create_object(create_object: CreateSchemaBaseType) -> dict[str, Any]:
         """
-        Создаем словарь для схемы создания модели.
+        Create a dictionary for the model creation schema.
         """
         create_dict = create_object.model_dump()
         if create_dict['id'] is None:
@@ -451,7 +455,7 @@ class DbCrudRepositoryBase(
     @classmethod
     def get_parent_model_type(cls, model_type: type[ModelBaseType]) -> type[ModelBaseType] | None:
         """
-        Получаем тип родительской модели.
+        Get the parent model type.
         """
         if not model_type.__bases__ or model_type.__bases__[0] not in cls.model_types:
             return None
@@ -460,7 +464,7 @@ class DbCrudRepositoryBase(
     @classmethod
     def check_get_by_ids_exact(cls, ids: Sequence[IdType], models: Sequence[ModelBaseType], exact: bool) -> None:
         """
-        Проверяем, что по идентификаторам получены все модели.
+        Check that all models were retrieved by identifiers.
         """
         if exact and len(ids) != len(models):
             raise ModelNotFoundError(
@@ -478,7 +482,7 @@ class DbCrudRepositoryBase(
         select_filter: Callable[[sa.Select[tuple[ModelBaseType]]], sa.Select[tuple[ModelBaseType]]] | None = None,
     ) -> PaginationResultSchema[ReadSchemaBaseType]:
         """
-        Получаем список моделей с пагинацией, поиском, сортировкой и фильтрами.
+        Get a list of models with pagination, search, sorting, and filters.
         """
         search_by = search_by or []
         sorting = sorting or []
@@ -504,7 +508,7 @@ class DbCrudRepositoryBase(
 
     def get_order_by_expr(self: Self, sorting: Iterable[str]) -> list[sa.UnaryExpression[Any]]:
         """
-        Получаем выражение сортировки.
+        Get the sorting expression.
         """
         order_by_expr: list[sa.UnaryExpression[Any]] = []
         for st in sorting:
@@ -534,7 +538,7 @@ class DbCrudRepositoryInt(
     ],
 ):
     """
-    Репозиторий для выполнения CRUD операций над моделями старого типа в базе данных.
+    Repository for CRUD operations on old-type models in the database.
     """
 
     __abstract__ = True
@@ -545,7 +549,7 @@ class DbCrudRepository(
     Generic[ModelType, ReadSchemaType, CreateSchemaType, UpdateSchemaType],
 ):
     """
-    Репозиторий для выполнения CRUD операций над моделями нового типа в базе данных.
+    Repository for CRUD operations on new-type models in the database.
     """
 
     __abstract__ = True

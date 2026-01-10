@@ -1,3 +1,3 @@
 """
-Пакет, содержащий тесты репозиториев.
+Package containing repository tests.
 """

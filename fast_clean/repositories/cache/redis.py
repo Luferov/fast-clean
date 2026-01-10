@@ -1,5 +1,5 @@
 """
-Модуль, содержащий репозиторий кеша с помощью Redis.
+Module containing the Redis cache repository.
 """
 
 from typing import Self
@@ -11,7 +11,7 @@ from redis.asyncio.client import Redis
 
 class RedisCacheRepository(RedisBackend):
     """
-    Репозиторий кеша с помощью Redis.
+    Redis cache repository.
     """
 
     def __init__(self, redis: Redis):
@@ -21,27 +21,27 @@ class RedisCacheRepository(RedisBackend):
     @override(check_signature=False)
     async def set(self: Self, key: str, value: str, expire: int | None = None, nx: bool = False) -> None:
         """
-        Устанавливаем значение.
+        Set a value.
         """
         await self.redis.set(key, value, ex=expire, nx=nx)
 
     async def incr(self: Self, key: str, amount: int = 1) -> int:
         """
-        Инкремент значения.
+        Increment a value.
         """
         return await self.redis.incr(key, amount)
 
     async def decr(self: Self, key: str, amount: int = 1) -> int:
         """
-        Декремент значения.
+        Decrement a value.
         """
         return await self.redis.decr(key, amount)
 
     async def clear(self, namespace: str | None = None, key: str | None = None) -> int:
         """
-        Удаляем значение.
+        Delete a value.
 
-        Родительский метод работает не правильно и не подсчитывает количество удаленных записей.
+        Parent method does not work correctly and does not count deleted records.
         https://github.com/long2ice/fastapi-cache/issues/241
         """
         if namespace:

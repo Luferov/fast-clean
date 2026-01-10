@@ -1,20 +1,21 @@
 """
-Модуль, содержащий тестовые модели.
+Module containing test models.
 """
 
 import uuid
 
-from fast_clean.db import BaseUUID
 from sqlalchemy import Boolean, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy_utils.types import ChoiceType
 
+from fast_clean.db import Base
+
 from .enums import CrudModelTypeEnum
 
 
-class CrudParentModel(BaseUUID):
+class CrudParentModel(Base):
     """
-    Родительская тестовая модель для тестирования репозитория.
+    Parent test model for repository testing.
     """
 
     __tablename__ = 'crud_parent_model'
@@ -31,7 +32,7 @@ class CrudParentModel(BaseUUID):
 
 class CrudChildAModel(CrudParentModel):
     """
-    Дочерня тестовая модель A для тестирования репозитория.
+    Child test model A for repository testing.
     """
 
     __tablename__ = 'crud_child_a_model'
@@ -46,7 +47,7 @@ class CrudChildAModel(CrudParentModel):
 
 class CrudChildBModel(CrudParentModel):
     """
-    Дочерняя тестовая модель B для тестирования репозитория.
+    Child test model B for repository testing.
     """
 
     __tablename__ = 'crud_child_b_model'

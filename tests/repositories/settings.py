@@ -1,14 +1,15 @@
 """
-Модуль, содержащий тестовые настройки.
+Module containing test settings.
 """
 
-from fast_clean.settings import BaseSettingsSchema
 from pydantic import BaseModel
+
+from fast_clean.settings import BaseSettingsSchema
 
 
 class UnknownSettingsSchema(BaseModel):
     """
-    Схема тестовых неизвестных настроек.
+    Test unknown settings schema.
     """
 
     value: str
@@ -16,7 +17,7 @@ class UnknownSettingsSchema(BaseModel):
 
 class ServiceSettingsSchema(BaseModel):
     """
-    Схема тестовых настроек сервиса.
+    Test service settings schema.
     """
 
     str_value: str
@@ -25,7 +26,7 @@ class ServiceSettingsSchema(BaseModel):
 
 class SettingsTest(BaseSettingsSchema):
     """
-    Тестовые настройки.
+    Test settings.
     """
 
     service: ServiceSettingsSchema | None = None

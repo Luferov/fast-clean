@@ -1,5 +1,5 @@
 """
-Пакет, содержащий репозитории.
+Package containing repositories.
 """
 
 from .cache import CacheManager as CacheManager

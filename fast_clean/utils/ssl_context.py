@@ -1,5 +1,5 @@
 """
-Модуль для создания SSL контекста.
+Module for creating an SSL context.
 """
 
 import ssl
@@ -12,7 +12,7 @@ StrOrBytesPath: TypeAlias = str | bytes  # stable
 
 class CertificateSchema(BaseModel):
     """
-    Схема необходимых файлов для создания SSL контекста.
+    Schema of required files for creating an SSL context.
     """
 
     ca_file: StrOrBytesPath
@@ -23,7 +23,7 @@ class CertificateSchema(BaseModel):
 
 def make_ssl_context(params: CertificateSchema, check_hostname: bool = False) -> ssl.SSLContext:
     """
-    Создаем SSL контекст.
+    Create an SSL context.
     """
     ssl_context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=params.ca_file)
     ssl_context.load_cert_chain(certfile=params.cert_file, keyfile=params.key_file, password=params.password)

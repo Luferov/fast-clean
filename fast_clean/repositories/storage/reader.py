@@ -1,5 +1,5 @@
 """
-Модуль, содержащий классы для потокового чтения данных.
+Module containing classes for streaming data reading.
 """
 
 from collections.abc import AsyncIterator
@@ -13,24 +13,24 @@ READ_SIZE = 5 * 1024 * 1024
 
 class StreamReadSyncProtocol(Protocol):
     """
-    Синхронный протокол потокового чтения данных.
+    Synchronous streaming data reading protocol.
     """
 
     def read(self: Self, size: int | None = READ_SIZE) -> bytes:
         """
-        Читаем данные.
+        Read data.
         """
         ...
 
 
 class StreamReadAsyncProtocol(Protocol):
     """
-    Асинхронный протокол потокового чтения данных.
+    Asynchronous streaming data reading protocol.
     """
 
     async def read(self: Self, size: int | None = READ_SIZE) -> bytes:
         """
-        Читаем данные.
+        Read data.
         """
         ...
 
@@ -38,7 +38,7 @@ class StreamReadAsyncProtocol(Protocol):
 class AsyncStreamReaderProtocol(Protocol):
     async def read(self: Self, size: int = -1) -> bytes:
         """
-        Потоковое чтение файлов.
+        Streaming file reading.
         """
         ...
 
@@ -48,31 +48,31 @@ StreamReadProtocol = StreamReadAsyncProtocol | StreamReadSyncProtocol
 
 class StreamReaderProtocol(Protocol):
     """
-    Протокол потокового чтения данных с контекстным менеджером.
+    Streaming data reading protocol with a context manager.
     """
 
     async def read(self: Self, size: int = READ_SIZE) -> bytes:
         """
-        Читаем данные.
+        Read data.
         """
         ...
 
     def __aiter__(self: Self) -> AsyncIterator[bytes]:
         """
-        Заходим в контекстный менеджер.
+        Enter the context manager.
         """
         ...
 
     async def __anext__(self: Self) -> bytes:
         """
-        Читаем следующую порцию данных.
+        Read the next chunk of data.
         """
         ...
 
 
 class AiofilesStreamReader:
     """
-    Реализация потокового чтения данных для библиотеки `aiofiles`.
+    Streaming data reading implementation for the `aiofiles` library.
     """
 
     def __init__(self, reader: AsyncBufferedReader) -> None:
@@ -80,19 +80,19 @@ class AiofilesStreamReader:
 
     async def read(self: Self, size: int = READ_SIZE) -> bytes:
         """
-        Читаем данные.
+        Read data.
         """
         return await self.reader.read(size)
 
     def __aiter__(self: Self) -> AsyncIterator[bytes]:
         """
-        Заходим в контекстный менеджер.
+        Enter the context manager.
         """
         return self
 
     async def __anext__(self: Self) -> bytes:
         """
-        Читаем следующую порцию данных.
+        Read the next chunk of data.
         """
         chunk = await self.reader.read(READ_SIZE)
         if chunk:
@@ -102,7 +102,7 @@ class AiofilesStreamReader:
 
 class AiohttpStreamReader:
     """
-    Реализация потокового чтения данных для библиотеки `aiohttp`.
+    Streaming data reading implementation for the `aiohttp` library.
     """
 
     def __init__(self, response: ClientResponse) -> None:
@@ -110,19 +110,19 @@ class AiohttpStreamReader:
 
     async def read(self: Self, size: int = READ_SIZE) -> bytes:
         """
-        Читаем данные.
+        Read data.
         """
         return await self.response.content.read(size)
 
     def __aiter__(self: Self) -> AsyncIterator[bytes]:
         """
-        Заходим в контекстный менеджер.
+        Enter the context manager.
         """
         return self
 
     async def __anext__(self: Self) -> bytes:
         """
-        Читаем следующую порцию данных.
+        Read the next chunk of data.
         """
         chunk = await self.response.content.read(READ_SIZE)
         if chunk:

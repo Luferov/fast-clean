@@ -1,3 +1,3 @@
 """
-Пакет, содержащий тесты библиотеки.
+Package containing library tests.
 """

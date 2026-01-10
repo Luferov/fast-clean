@@ -1,5 +1,5 @@
 """
-Модуль, содержащий тесты репозиториев CRUD операций над моделями.
+Module containing tests for CRUD repository operations on models.
 """
 
 import uuid
@@ -7,6 +7,7 @@ from collections.abc import Hashable, Iterable
 from typing import cast
 
 import pytest
+
 from fast_clean.exceptions import ModelIntegrityError, ModelNotFoundError
 from fast_clean.schemas import PaginationSchema
 
@@ -102,13 +103,13 @@ MODELS_TO_UPDATE: list[tuple[CrudParentModelReadSchema, CrudParentModelReadSchem
 )
 class TestCrudRepositories:
     """
-    Тесты репозиториев для выполнения CRUD операций над моделями.
+    Tests for repositories performing CRUD operations on models.
     """
 
     @staticmethod
     async def test_get(crud_repository: ModelRepositoryProtocol) -> None:
         """
-        Тестируем метод `get`.
+        Test the `get` method.
         """
         for expected_model in MODELS:
             assert await crud_repository.get(expected_model.id) == expected_model
@@ -116,7 +117,7 @@ class TestCrudRepositories:
     @staticmethod
     async def test_get_or_none(crud_repository: ModelRepositoryProtocol) -> None:
         """
-        Тестируем метод `get_or_none`.
+        Test the `get_or_none` method.
         """
         for expected_model in MODELS:
             assert await crud_repository.get_or_none(expected_model.id) == expected_model
@@ -125,7 +126,7 @@ class TestCrudRepositories:
     @staticmethod
     async def test_get_by_ids(crud_repository: ModelRepositoryProtocol) -> None:
         """
-        Тестируем метод `get_by_ids`.
+        Test the `get_by_ids` method.
         """
         models = [*PARENT_MODELS[:5], *CHILD_A_MODELS[:5], *CHILD_B_MODELS[:5]]
         model_ids = [model.id for model in models]
@@ -140,14 +141,14 @@ class TestCrudRepositories:
     @staticmethod
     async def test_get_all(crud_repository: ModelRepositoryProtocol) -> None:
         """
-        Тестируем метод `get_all`.
+        Test the `get_all` method.
         """
         assert set(await crud_repository.get_all()) == set(MODELS)
 
     @staticmethod
     async def test_paginate_sorting(crud_repository: ModelRepositoryProtocol) -> None:
         """
-        Тестируем сортировку в методе `paginate`.
+        Test sorting in the `paginate` method.
         """
         expected_models = sorted((model for model in MODELS), key=lambda model: (model.str_column, -model.int_column))
         pagination_result = await crud_repository.paginate(
@@ -160,7 +161,7 @@ class TestCrudRepositories:
     @staticmethod
     async def test_paginate_search(crud_repository: ModelRepositoryProtocol) -> None:
         """
-        Тестируем поиск в методе `paginate`.
+        Test searching in the `paginate` method.
         """
         search = '6'
         expected_models = {cast(Hashable, model) for model in MODELS if search in model.str_column}
@@ -175,7 +176,7 @@ class TestCrudRepositories:
     @classmethod
     async def test_create(cls, crud_repository: ModelRepositoryProtocol) -> None:
         """
-        Тестируем метод `create`.
+        Test the `create` method.
         """
         for model_to_create in MODELS_TO_CREATE:
             assert await crud_repository.get_or_none(model_to_create.id) is None
@@ -190,7 +191,7 @@ class TestCrudRepositories:
     @classmethod
     async def test_bulk_create(cls, crud_repository: ModelRepositoryProtocol) -> None:
         """
-        Тестируем метод `bulk_create`.
+        Test the `bulk_create` method.
         """
         ids_to_create = [model.id for model in MODELS_TO_CREATE]
         assert [] == await crud_repository.get_by_ids(ids_to_create)
@@ -207,7 +208,7 @@ class TestCrudRepositories:
     @classmethod
     async def test_update(cls, crud_repository: ModelRepositoryProtocol) -> None:
         """
-        Тестируем метод `update`.
+        Test the `update` method.
         """
         for original_model, expected_updated_model in MODELS_TO_UPDATE:
             actual_model = await crud_repository.get(original_model.id)
@@ -224,7 +225,7 @@ class TestCrudRepositories:
     @classmethod
     async def test_bulk_update(cls, crud_repository: ModelRepositoryProtocol) -> None:
         """
-        Тестируем метод `bulk_update`.
+        Test the `bulk_update` method.
         """
         ids_to_update = [models[0].id for models in MODELS_TO_UPDATE]
         original_models = [models[0] for models in MODELS_TO_UPDATE]
@@ -245,7 +246,7 @@ class TestCrudRepositories:
     @classmethod
     async def test_upsert_create(cls, crud_repository: ModelRepositoryProtocol) -> None:
         """
-        Тестируем создание модели с помощью метода `upsert`.
+        Test creating a model using the `upsert` method.
         """
         for model_to_create in MODELS_TO_CREATE:
             assert await crud_repository.get_or_none(model_to_create.id) is None
@@ -258,7 +259,7 @@ class TestCrudRepositories:
     @classmethod
     async def test_upsert_update(cls, crud_repository: ModelRepositoryProtocol) -> None:
         """
-        Тестируем обновление модели с помощью метода `upsert`.
+        Test updating a model using the `upsert` method.
         """
         for original_model, expected_updated_model in MODELS_TO_UPDATE:
             actual_model = await crud_repository.get(original_model.id)
@@ -275,7 +276,7 @@ class TestCrudRepositories:
     @classmethod
     async def test_delete(cls, crud_repository: ModelRepositoryProtocol) -> None:
         """
-        Тестируем метод `delete`.
+        Test the `delete` method.
         """
         bound = 15
         for model in MODELS:

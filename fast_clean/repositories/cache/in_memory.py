@@ -1,5 +1,5 @@
 """
-Модуль, содержащий репозиторий кеша в памяти.
+Module containing the in-memory cache repository.
 """
 
 from typing import Self
@@ -10,15 +10,15 @@ from overrides import override
 
 class InMemoryCacheRepository(InMemoryBackend):
     """
-    Репозиторий кеша в памяти.
+    In-memory cache repository.
     """
 
     @override(check_signature=False)
     def _get(self, key: str) -> Value | None:
         """
-        Получаем внутреннее значение.
+        Get the internal value.
 
-        Родительский метод работает неправильно, т.к. не рассчитан на правильную логику метода `set`.
+        Parent method works incorrectly because it is not designed for the correct `set` method logic.
         """
         v = self._store.get(key)
         if v:
@@ -31,10 +31,10 @@ class InMemoryCacheRepository(InMemoryBackend):
     @override(check_signature=False)
     async def set(self: Self, key: str, value: str, expire: int | None = None, nx: bool = False) -> None:
         """
-        Устанавливаем значение.
+        Set a value.
 
-        Родительский метод работает неправильно, т.к. при отсутствии `expire` должно устанавливаться `-1`.
-        Старая логика приводит к тому, что метод работает не так, как `RedisBackend`.
+        Parent method works incorrectly because when `expire` is absent it should be set to `-1`.
+        The old logic makes the method behave differently than `RedisBackend`.
         """
         async with self._lock:
             ttl_ts = self._now + expire if expire is not None else -1
@@ -44,7 +44,7 @@ class InMemoryCacheRepository(InMemoryBackend):
 
     async def incr(self: Self, key: str, amount: int = 1) -> int:
         """
-        Инкремент значения.
+        Increment a value.
         """
         v = self._get(key)
         if v is None:
@@ -57,6 +57,6 @@ class InMemoryCacheRepository(InMemoryBackend):
 
     async def decr(self: Self, key: str, amount: int = 1) -> int:
         """
-        Декремент значения.
+        Decrement a value.
         """
         return await self.incr(key, -amount)

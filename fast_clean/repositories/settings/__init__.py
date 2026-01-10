@@ -1,7 +1,7 @@
 """
-Пакет, содержащий репозиторий настроек.
+Package containing the settings repository.
 
-Представлено 2 реализации:
+Two implementations are provided:
 - Env
 - Prefect
 """
@@ -16,36 +16,36 @@ from .type_vars import SettingsSchema
 
 class SettingsRepositoryProtocol(Protocol):
     """
-    Протокол репозитория настроек.
+    Settings repository protocol.
     """
 
     async def get(self: Self, schema_type: type[SettingsSchema], *, name: str | None = None) -> SettingsSchema:
         """
-        Получаем настройки.
+        Get settings.
         """
         ...
 
 
 class SettingsRepositoryFactoryProtocol(Protocol):
     """
-    Протокол фабрики репозиториев настроек.
+    Settings repository factory protocol.
     """
 
     async def make(self: Self, settings_source: SettingsSourceEnum) -> SettingsRepositoryProtocol:
         """
-        Создаем репозиторий настроек.
+        Create a settings repository.
         """
         ...
 
 
 class SettingsRepositoryFactoryImpl:
     """
-    Реализация фабрики репозиториев настроек.
+    Settings repository factory implementation.
     """
 
     async def make(self: Self, settings_source: SettingsSourceEnum) -> SettingsRepositoryProtocol:
         """
-        Создаем репозиторий настроек.
+        Create a settings repository.
         """
         match settings_source:
             case SettingsSourceEnum.ENV:

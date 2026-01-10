@@ -1,5 +1,5 @@
 """
-Пакет, содержащий команды Typer.
+Package containing Typer commands.
 """
 
 from .cryptography import use_cryptography as use_cryptography

@@ -1,11 +1,11 @@
 """
-Модуль, содержащий исключения репозитория настроек.
+Module containing settings repository exceptions.
 """
 
 
 class SettingsRepositoryError(Exception):
     """
-    Ошибка репозитория настроек.
+    Settings repository error.
     """
 
     def __init__(self, message: str, *args: object) -> None:

@@ -1,5 +1,5 @@
 """
-Модуль, содержащий перечисления сервиса криптографии для шифрования секретных параметров.
+Module containing cryptography service enums for encrypting secret parameters.
 """
 
 from enum import StrEnum, auto
@@ -7,14 +7,14 @@ from enum import StrEnum, auto
 
 class CryptographicAlgorithmEnum(StrEnum):
     """
-    Криптографический алгоритм.
+    Cryptographic algorithm.
     """
 
     AES_GCM = auto()
     """
-    Алгоритм AES в режиме GCM.
+    AES algorithm in GCM mode.
     """
     AES_CBC = auto()
     """
-    Алгоритм AES в режиме CBC.
+    AES algorithm in CBC mode.
     """

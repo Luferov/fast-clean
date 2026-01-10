@@ -1,5 +1,5 @@
 """
-Модуль, содержащий тесты вспомогательных функций для работы с Typer.
+Module containing tests for Typer helper functions.
 """
 
 from fast_clean.utils.typer import typer_async
@@ -7,7 +7,7 @@ from fast_clean.utils.typer import typer_async
 
 def test_typer_async() -> None:
     """
-    Тестируем декоратор `typer_async`.
+    Test the `typer_async` decorator.
     """
 
     @typer_async

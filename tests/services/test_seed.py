@@ -1,14 +1,14 @@
 """
-Модуль, содержащий тесты сервиса для загрузки данных из файлов.
+Module containing tests for the file data loading service.
 """
 
 import uuid
 
 import sqlalchemy as sa
-from fast_clean.db import make_async_session_factory
-from fast_clean.services.seed import SeedService
 from sqlalchemy.orm import selectinload
 
+from fast_clean.db import make_async_session_factory
+from fast_clean.services.seed import SeedService
 from tests.settings import SettingsSchema
 
 from .models import SeedParentModel
@@ -17,7 +17,7 @@ from .schemas import ChildModelSchema, ParentModelSchema
 
 class TestSeedService:
     """
-    Тесты сервиса для загрузки данных из файлов.
+    Tests for the file data loading service.
     """
 
     EXPECTED_MODELS = [
@@ -64,7 +64,7 @@ class TestSeedService:
     @classmethod
     async def test_load_data_with_path_and_update(cls, settings: SettingsSchema, seed_service: SeedService) -> None:
         """
-        Тестируем метод `load_data` с передачей пути и обновлением созданных моделей.
+        Test the `load_data` method with a provided path and updating created models.
         """
         path = settings.base_dir / 'data' / 'seed'
         await seed_service.load_data(path)
@@ -77,7 +77,7 @@ class TestSeedService:
     @classmethod
     async def test_load_data_without_path(cls, settings: SettingsSchema, seed_service: SeedService) -> None:
         """
-        Тестируем метод `load_data` с автоматическим поиском пути.
+        Test the `load_data` method with automatic path discovery.
         """
         await seed_service.load_data()
         assert await cls.get_actual_models(settings) == cls.EXPECTED_MODELS
@@ -85,7 +85,7 @@ class TestSeedService:
     @staticmethod
     async def get_actual_models(settings: SettingsSchema) -> list[ParentModelSchema]:
         """
-        Получаем созданные модели.
+        Get the created models.
         """
         async with make_async_session_factory(settings.db.dsn)() as session:
             statement = (
@@ -101,7 +101,7 @@ class TestSeedService:
     @classmethod
     async def change_models(cls, settings: SettingsSchema) -> None:
         """
-        Вносим изменения в созданные модели.
+        Apply changes to the created models.
         """
         async with make_async_session_factory(settings.db.dsn)() as session, session.begin():
             delete_statement = sa.delete(SeedParentModel).where(SeedParentModel.id == cls.EXPECTED_MODELS[0].id)

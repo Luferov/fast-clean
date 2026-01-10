@@ -1,5 +1,5 @@
 """
-Пакет, содержащий сервисы.
+Package containing services.
 """
 
 from .cryptography import AesGcmCryptographyService as AesGcmCryptographyService

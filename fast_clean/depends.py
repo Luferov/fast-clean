@@ -1,5 +1,5 @@
 """
-Модуль, содержащий зависимости.
+Module containing dependencies.
 """
 
 import json
@@ -8,14 +8,13 @@ from typing import Annotated
 
 from dishka import Provider, Scope, provide
 from fastapi import Depends, Request
-from faststream.kafka import KafkaBroker
 from flatten_dict import unflatten
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from starlette.datastructures import FormData
 from stringcase import snakecase
 
-from .broker import BrokerFactory
 from .db import SessionFactory, SessionManagerImpl, SessionManagerProtocol
+from .redis import RedisManager
 from .repositories import (
     CacheManager,
     CacheRepositoryProtocol,
@@ -40,12 +39,12 @@ from .services import (
     SeedService,
     TransactionService,
 )
-from .settings import CoreCacheSettingsSchema, CoreKafkaSettingsSchema, CoreSettingsSchema, CoreStorageSettingsSchema
+from .settings import CoreCacheSettingsSchema, CoreSettingsSchema, CoreStorageSettingsSchema
 
 
 async def get_nested_form_data(request: Request) -> FormData:
     """
-    Получаем форму, позволяющую использовать вложенные словари.
+    Get a form that allows using nested dictionaries.
     """
     dot_data = {k.replace('[', '.').replace(']', ''): v for k, v in (await request.form()).items()}
     nested_data = unflatten(dot_data, 'dot')
@@ -57,14 +56,14 @@ async def get_nested_form_data(request: Request) -> FormData:
 
 def get_pagination(page: int | None = None, page_size: int | None = None) -> PaginationRequestSchema:
     """
-    Получаем входные данные пагинации.
+    Get pagination input data.
     """
     return PaginationRequestSchema(page=page or 1, page_size=page_size or 10)
 
 
 def get_sorting(sorting: str | None = None) -> Sequence[str]:
     """
-    Получаем входные данные сортировки.
+    Get sorting input data.
     """
     if not sorting:
         return []
@@ -78,7 +77,7 @@ Sorting = Annotated[Sequence[str], Depends(get_sorting)]
 
 class CoreProvider(Provider):
     """
-    Провайдер зависимостей.
+    Dependency provider.
     """
 
     scope = Scope.REQUEST
@@ -86,10 +85,14 @@ class CoreProvider(Provider):
     # --- repositories ---
 
     settings_repository_factory = provide(
-        SettingsRepositoryFactoryImpl, provides=SettingsRepositoryFactoryProtocol, scope=Scope.APP
+        SettingsRepositoryFactoryImpl,
+        provides=SettingsRepositoryFactoryProtocol,
+        scope=Scope.APP,
     )
     storage_repository_factory = provide(
-        StorageRepositoryFactoryImpl, provides=StorageRepositoryFactoryProtocol, scope=Scope.APP
+        StorageRepositoryFactoryImpl,
+        provides=StorageRepositoryFactoryProtocol,
+        scope=Scope.APP,
     )
 
     @provide(scope=Scope.APP)
@@ -98,7 +101,7 @@ class CoreProvider(Provider):
         settings_repository_factory: SettingsRepositoryFactoryProtocol,
     ) -> SettingsRepositoryProtocol:
         """
-        Получаем репозиторий настроек.
+        Get the settings repository.
         """
         return await settings_repository_factory.make(SettingsSourceEnum.ENV)
 
@@ -106,7 +109,7 @@ class CoreProvider(Provider):
     @staticmethod
     async def get_settings(settings_repository: SettingsRepositoryProtocol) -> CoreSettingsSchema:
         """
-        Получаем настройки.
+        Get settings.
         """
         return await settings_repository.get(CoreSettingsSchema)
 
@@ -114,27 +117,25 @@ class CoreProvider(Provider):
     @staticmethod
     async def get_cache_settings(settings_repository: SettingsRepositoryProtocol) -> CoreCacheSettingsSchema:
         """
-        Получаем настройки кеша.
+        Get cache settings.
         """
         return await settings_repository.get(CoreCacheSettingsSchema)
-
-    @provide
-    @staticmethod
-    async def get_broker_repository(settings_repository: SettingsRepositoryProtocol) -> AsyncIterator[KafkaBroker]:
-        """
-        Получаем репозиторий брокера сообщений.
-        """
-        kafka_settings = await settings_repository.get(CoreKafkaSettingsSchema)
-        yield BrokerFactory.make_static(kafka_settings)
 
     @provide(scope=Scope.APP)
     @staticmethod
     async def get_cache_repository(settings_repository: SettingsRepositoryProtocol) -> CacheRepositoryProtocol:
         """
-        Получаем репозиторий кеша.
+        Get the cache repository.
         """
+        settings = await settings_repository.get(CoreSettingsSchema)
+        if settings.redis_dsn is not None:
+            RedisManager.init(settings.redis_dsn)
         cache_settings = await settings_repository.get(CoreCacheSettingsSchema)
-        return CacheManager.init(cache_settings)
+        if CacheManager.cache_repository is None:
+            CacheManager.init(cache_settings, RedisManager.redis)
+        if CacheManager.cache_repository is not None:
+            return CacheManager.cache_repository
+        raise ValueError('Cache is not initialized')
 
     @provide
     @staticmethod
@@ -143,7 +144,7 @@ class CoreProvider(Provider):
         storage_repository_factory: StorageRepositoryFactoryProtocol,
     ) -> AsyncIterator[StorageRepositoryProtocol]:
         """
-        Получаем репозиторий файлового хранилища.
+        Get the file storage repository.
         """
         storage_settings = await settings_repository.get(CoreStorageSettingsSchema)
         if storage_settings.provider == 's3' and storage_settings.s3 is not None:
@@ -160,7 +161,7 @@ class CoreProvider(Provider):
             async with storage_repository:
                 yield storage_repository
         else:
-            raise NotImplementedError(f'Storage {storage_settings.provider} is not allowed')
+            raise NotImplementedError(f'Storage {storage_settings.provider} not allowed')
 
     # --- db ---
 
@@ -175,7 +176,7 @@ class CoreProvider(Provider):
     @staticmethod
     async def get_async_session(session_maker: async_sessionmaker[AsyncSession]) -> AsyncIterator[AsyncSession]:
         """
-        Получаем асинхронную сессию.
+        Get an async session.
         """
         async with session_maker() as session:
             yield session
@@ -184,7 +185,7 @@ class CoreProvider(Provider):
     @staticmethod
     def get_session_manager(session: AsyncSession) -> SessionManagerProtocol:
         """
-        Получаем менеджер сессий.
+        Get the session manager.
         """
         return SessionManagerImpl(session)
 
@@ -197,7 +198,7 @@ class CoreProvider(Provider):
     @staticmethod
     def get_cryptography_service_factory(settings: CoreSettingsSchema) -> CryptographyServiceFactory:
         """
-        Получаем фабрику сервисов криптографии.
+        Get the cryptography services factory.
         """
         return CryptographyServiceFactory(settings.secret_key)
 
@@ -207,18 +208,20 @@ class CoreProvider(Provider):
         cryptography_service_factory: CryptographyServiceFactory,
     ) -> CryptographyServiceProtocol:
         """
-        Получаем сервис криптографии.
+        Get the cryptography service.
         """
         return await cryptography_service_factory.make(CryptographicAlgorithmEnum.AES_GCM)
 
     @provide(scope=Scope.APP)
     @staticmethod
-    def get_lock_service(cache_settings: CoreCacheSettingsSchema) -> LockServiceProtocol:
+    def get_lock_service(settings: CoreSettingsSchema) -> LockServiceProtocol:
         """
-        Получаем сервис распределенной блокировки.
+        Get the distributed lock service.
         """
-        redis_client = CacheManager.init(cache_settings)
-        return RedisLockService(redis_client)  # type: ignore
+        assert settings.redis_dsn is not None
+        RedisManager.init(settings.redis_dsn)
+        assert RedisManager.redis is not None
+        return RedisLockService(RedisManager.redis)
 
 
 provider = CoreProvider()

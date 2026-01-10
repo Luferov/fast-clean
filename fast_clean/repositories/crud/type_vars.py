@@ -1,11 +1,11 @@
 """
-Модуль, содержащий переменные типов.
+Module containing type variables.
 """
 
 import uuid
 from typing import TypeVar
 
-from fast_clean.db import BaseInt, BaseUUID
+from fast_clean.db import Base, BaseInt
 from fast_clean.schemas import (
     CreateSchema,
     CreateSchemaInt,
@@ -15,7 +15,7 @@ from fast_clean.schemas import (
     UpdateSchemaInt,
 )
 
-ModelBaseType = TypeVar('ModelBaseType', bound=BaseInt | BaseUUID)
+ModelBaseType = TypeVar('ModelBaseType', bound=BaseInt | Base)
 CreateSchemaBaseType = TypeVar('CreateSchemaBaseType', bound=CreateSchemaInt | CreateSchema)
 ReadSchemaBaseType = TypeVar('ReadSchemaBaseType', bound=ReadSchemaInt | ReadSchema)
 UpdateSchemaBaseType = TypeVar('UpdateSchemaBaseType', bound=UpdateSchemaInt | UpdateSchema)
@@ -29,7 +29,7 @@ ReadSchemaIntType = TypeVar('ReadSchemaIntType', bound=ReadSchemaInt)
 UpdateSchemaIntType = TypeVar('UpdateSchemaIntType', bound=UpdateSchemaInt)
 
 
-ModelType = TypeVar('ModelType', bound=BaseUUID)
+ModelType = TypeVar('ModelType', bound=Base)
 CreateSchemaType = TypeVar('CreateSchemaType', bound=CreateSchema)
 ReadSchemaType = TypeVar('ReadSchemaType', bound=ReadSchema)
 UpdateSchemaType = TypeVar('UpdateSchemaType', bound=UpdateSchema)

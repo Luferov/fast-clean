@@ -1,5 +1,5 @@
 """
-Модуль, содержащий middleware.
+Module containing middleware.
 """
 
 import time
@@ -18,14 +18,13 @@ async def add_process_time_header(request: Request, call_next: Callable[[Request
 
 def use_middleware(
     app: FastAPI,
-    name: str,
     cors_origins: list[str],
     *,
     allow_methods: list[str] | None = None,
     allow_headers: list[str] | None = None,
 ) -> FastAPI:
     """
-    Регистрируем middleware.
+    Register middleware.
     """
 
     app.add_middleware(

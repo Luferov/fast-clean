@@ -1,5 +1,5 @@
 """
-Модуль, содержащий тестовые репозитории.
+Module containing test repositories.
 """
 
 from typing import Protocol
@@ -29,7 +29,7 @@ class ModelRepositoryProtocol(
     Protocol,
 ):
     """
-    Протокол репозитория для выполнения операций над моделями.
+    Repository protocol for operations on models.
     """
 
     ...
@@ -39,7 +39,7 @@ class ModelInMemoryRepository(
     InMemoryCrudRepository[CrudParentModelReadSchema, CrudParentModelCreateSchema, CrudParentModelUpdateSchema]
 ):
     """
-    Репозиторий для выполнения операций над моделями в памяти.
+    Repository for operations on models in memory.
     """
 
     __subtypes__ = (
@@ -54,7 +54,7 @@ class ModelDbRepository(
     ]
 ):
     """
-    Репозиторий для выполнения операций над моделями в базе данных.
+    Repository for operations on models in the database.
     """
 
     __subtypes__ = (

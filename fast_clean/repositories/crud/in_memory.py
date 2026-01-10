@@ -1,5 +1,5 @@
 """
-Модуль, содержащий репозиторий для выполнения CRUD операций над моделями в памяти.
+Module containing the repository for CRUD operations on in-memory models.
 """
 
 import contextlib
@@ -29,12 +29,12 @@ from .type_vars import (
 
 class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBaseType, UpdateSchemaBaseType, IdType]):
     """
-    Базовый репозиторий для выполнения CRUD операций над моделями в памяти.
+    Base repository for CRUD operations on in-memory models.
     """
 
     __abstract__: bool = True
 
-    __orig_bases__: 'tuple[type[InMemoryCrudRepositoryBase[ReadSchemaBaseType, CreateSchemaBaseType, UpdateSchemaBaseType, IdType]]]'
+    __orig_bases__: 'tuple[type[InMemoryCrudRepositoryBase[ReadSchemaBaseType, CreateSchemaBaseType, UpdateSchemaBaseType, IdType]]]'  # noqa
     __subtypes__: Sequence[tuple[type[ReadSchemaBaseType], type[CreateSchemaBaseType], type[UpdateSchemaBaseType]]]
 
     create_to_read_schemas_mapping: dict[type[CreateSchemaBaseType], type[ReadSchemaBaseType]]
@@ -50,9 +50,9 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
 
     def __init_subclass__(cls) -> None:
         """
-        Инициализируем класс.
+        Initialize the class.
 
-        Получаем схемы Pydantic из базового класса.
+        Get Pydantic schemas from the base class.
         """
         if cls.__dict__.get('__abstract__', False):
             return super().__init_subclass__()
@@ -96,20 +96,20 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
     @abstractmethod
     def generate_id(self: Self) -> IdType:
         """
-        Генерируем идентификатор.
+        Generate an identifier.
         """
         ...
 
     def get_model_name(self: Self, read_schema_type: type[ReadSchemaBaseType] | None = None) -> str:
         """
-        Получаем название модели.
+        Get the model name.
         """
         read_schema_type = read_schema_type or self.read_schema_type
         return read_schema_type.__name__.replace('Schema', '')
 
     async def get(self: Self, id: IdType) -> ReadSchemaBaseType:
         """
-        Получаем модель по идентификатору.
+        Get a model by identifier.
         """
         model = self.models.get(id)
         if model is None:
@@ -118,7 +118,7 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
 
     async def get_or_none(self: Self, id: IdType) -> ReadSchemaBaseType | None:
         """
-        Получаем модель или None по идентификатору.
+        Get a model or None by identifier.
         """
         with contextlib.suppress(ModelNotFoundError):
             return await self.get(id)
@@ -126,7 +126,7 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
 
     async def get_by_ids(self: Self, ids: Sequence[IdType], *, exact: bool = False) -> list[ReadSchemaBaseType]:
         """
-        Получаем список моделей по идентификаторам.
+        Get a list of models by identifiers.
         """
         models: list[ReadSchemaBaseType] = []
         for id in ids:
@@ -138,7 +138,7 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
 
     async def get_all(self: Self) -> list[ReadSchemaBaseType]:
         """
-        Получаем все модели.
+        Get all models.
         """
         return list(self.models.values())
 
@@ -151,7 +151,7 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
         sorting: Iterable[str] | None = None,
     ) -> PaginationResultSchema[ReadSchemaBaseType]:
         """
-        Получаем список моделей с пагинацией, поиском и сортировкой.
+        Get a list of models with pagination, search, and sorting.
         """
         return self.paginate_with_filter(
             pagination,
@@ -162,7 +162,7 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
 
     async def create(self: Self, create_object: CreateSchemaBaseType) -> ReadSchemaBaseType:
         """
-        Создаем модель.
+        Create a model.
         """
         model = self.make_model(create_object)
         self.models[cast(IdType, model.id)] = model
@@ -170,7 +170,7 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
 
     async def bulk_create(self: Self, create_objects: list[CreateSchemaBaseType]) -> list[ReadSchemaBaseType]:
         """
-        Создаем несколько моделей.
+        Create multiple models.
         """
         models: list[ReadSchemaBaseType] = []
         for create_object in create_objects:
@@ -181,7 +181,7 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
 
     async def update(self: Self, update_object: UpdateSchemaBaseType) -> ReadSchemaBaseType:
         """
-        Обновляем модель.
+        Update a model.
         """
         read_schema_type = self.update_to_read_schemas_mapping[type(update_object)]
         model = self.models.get(cast(IdType, update_object.id))
@@ -201,14 +201,14 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
 
     async def bulk_update(self: Self, update_objects: list[UpdateSchemaBaseType]) -> None:
         """
-        Обновляем несколько моделей.
+        Update multiple models.
         """
         for update_object in update_objects:
             await self.update(update_object)
 
     async def upsert(self: Self, create_object: CreateSchemaBaseType) -> ReadSchemaBaseType:
         """
-        Создаем или обновляем модель.
+        Create or update a model.
         """
         if create_object.id is None or create_object.id not in self.models:
             return await self.create(create_object)
@@ -223,7 +223,7 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
 
     async def delete(self: Self, ids: Sequence[IdType]) -> None:
         """
-        Удаляем модели.
+        Delete models.
         """
         for id in ids:
             if id in self.models:
@@ -236,7 +236,7 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
         exact: bool,
     ) -> None:
         """
-        Проверяем, что по идентификаторам получены все модели.
+        Check that all models were retrieved by identifiers.
         """
         if exact and len(ids) != len(models):
             raise ModelNotFoundError(
@@ -254,7 +254,7 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
         select_filter: Callable[[ReadSchemaBaseType], bool] | None = None,
     ) -> PaginationResultSchema[ReadSchemaBaseType]:
         """
-        Получаем список моделей с пагинацией, поиском, сортировкой и фильтрами.
+        Get a list of models with pagination, search, sorting, and filters.
         """
         search_by = search_by or []
         sorting = sorting or []
@@ -275,7 +275,7 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
     @classmethod
     def sort(cls, models: list[ReadSchemaBaseType], sorting: Iterable[str]) -> list[ReadSchemaBaseType]:
         """
-        Сортируем модели.
+        Sort models.
         """
         if not sorting:
             return models
@@ -291,7 +291,7 @@ class InMemoryCrudRepositoryBase(ABC, Generic[ReadSchemaBaseType, CreateSchemaBa
 
     def make_model(self: Self, create_object: CreateSchemaBaseType) -> ReadSchemaBaseType:
         """
-        Создаем модель без сохранения.
+        Create a model without saving.
         """
         create_dict = create_object.model_dump()
         if create_dict['id'] is None:
@@ -317,7 +317,7 @@ class InMemoryCrudRepositoryInt(
     ],
 ):
     """
-    Репозиторий для выполнения CRUD операций над моделями старого типа в памяти.
+    Repository for CRUD operations on old-type models in memory.
     """
 
     __abstract__ = True
@@ -328,7 +328,7 @@ class InMemoryCrudRepositoryInt(
 
     def generate_id(self: Self) -> int:
         """
-        Генерируем идентификатор.
+        Generate an identifier.
         """
         current_id = self.ids_counter
         self.ids_counter += 1
@@ -349,13 +349,13 @@ class InMemoryCrudRepository(
     ],
 ):
     """
-    Репозиторий для выполнения CRUD операций над моделями нового типа в памяти.
+    Repository for CRUD operations on new-type models in memory.
     """
 
     __abstract__ = True
 
     def generate_id(self: Self) -> uuid.UUID:
         """
-        Генерируем идентификатор.
+        Generate an identifier.
         """
         return uuid.uuid4()

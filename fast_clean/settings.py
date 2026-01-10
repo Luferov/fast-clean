@@ -1,22 +1,24 @@
 """
-Модуль, содержащий настройки.
+Module containing settings.
 """
 
 from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Annotated, ClassVar, Literal, Self
+from typing import ClassVar, Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field, RedisDsn, model_validator
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, RedisDsn
 from pydantic_settings import BaseSettings as PydanticBaseSettings
 from pydantic_settings import SettingsConfigDict
 from typing_extensions import Unpack
 
+from fast_clean.schemas import BasicAuthSchema, BearerTokenAuthSchema
+
 
 class CoreDbSettingsSchema(BaseModel):
     """
-    Схема настроек базы данных.
+    Database settings schema.
     """
 
     provider: str = 'postgresql+psycopg_async'
@@ -27,6 +29,7 @@ class CoreDbSettingsSchema(BaseModel):
     password: str
     name: str
 
+    echo: bool = False
     pool_pre_ping: bool = True
     disable_prepared_statements: bool = True
     scheme: str = 'public'
@@ -34,7 +37,7 @@ class CoreDbSettingsSchema(BaseModel):
     @property
     def dsn(self: Self) -> str:
         """
-        DSN подключения к базе данных.
+        Database connection DSN.
         """
         return f'{self.provider}://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}'
 
@@ -45,7 +48,7 @@ class CoreRedisSettingsSchema(BaseModel):
 
 class CoreCacheSettingsSchema(BaseModel):
     """
-    Схема настроек кеша.
+    Cache settings schema.
     """
 
     provider: Literal['in_memory', 'redis'] = 'in_memory'
@@ -57,7 +60,7 @@ class CoreCacheSettingsSchema(BaseModel):
 
 class CoreS3SettingsSchema(BaseModel):
     """
-    Схема настроек S3.
+    S3 settings schema.
     """
 
     endpoint: str
@@ -70,7 +73,7 @@ class CoreS3SettingsSchema(BaseModel):
 
 class CoreStorageSettingsSchema(BaseModel):
     """
-    Схема настроек хранилища.
+    Storage settings schema.
     """
 
     provider: Literal['local', 's3'] = 'local'
@@ -81,7 +84,7 @@ class CoreStorageSettingsSchema(BaseModel):
 
 class CoreElasticsearchSettingsSchema(BaseModel):
     """
-    Схема настроек Elasticsearch.
+    Elasticsearch settings schema.
     """
 
     host: str
@@ -98,76 +101,47 @@ class CoreElasticsearchSettingsSchema(BaseModel):
 
 class CoreSearchSettingsSchema(BaseModel):
     """
-    Схема настроек движка поиска.
+    Search engine settings schema.
     """
 
     provider: Literal['elasticsearch', 'open_search'] = 'elasticsearch'
     elasticsearch: CoreElasticsearchSettingsSchema | None = None
 
 
-class CoreKafkaSettingsSchema(BaseModel):
-    """
-    Схема настроек Kafka.
-    """
-
-    bootstrap_servers: str
-    group_id: str
-    credentials: Literal['SSL', 'SASL'] | None = None
-    # For SSL
-    cert_file: str | None = None
-    ca_file: str | None = None
-    key_file: str | None = None
-    password: str | None = None
-    # For SASL
-    broker_username: str | None = None
-    broker_password: str | None = None
-
-    @model_validator(mode='after')
-    def validate_credentials(self: Self) -> Self:
-        """
-        Проверяем на правильность заполнение параметров для авторизации.
-        """
-        match self.credentials:
-            case 'SSL':
-                for field in ('ca_file', 'cert_file', 'key_file'):
-                    assert bool(getattr(self, field)), f'{field} must be set when credentials={self.credentials}'
-            case 'SASL':
-                for field in ('broker_username', 'broker_password'):
-                    assert bool(getattr(self, field)), f'{field} must be set when credentials={self.credentials}'
-            case _:
-                ...
-        return self
-
-
 class CoreServiceSettingsSchema(BaseModel):
     """
-    Схема настроек доступа к сервису.
+    Service access settings schema.
     """
 
-    host: str
-    user: str | None = None
-    password: str | None = None
+    host: HttpUrl
 
-
-class CoreTopicSettingsSchema(BaseModel):
+    auth: BasicAuthSchema | BearerTokenAuthSchema | None = Field(None, discriminator='type')
     """
-    Схема настроек топика.
+    Authentication.
+    """
+    username: str | None = Field(None, deprecated=True)
+    password: str | None = Field(None, deprecated=True)
+    """
+    Basic Auth authentication.
     """
 
-    name: str
-    auto_offset_reset: Literal['latest', 'earliest', 'none'] = 'latest'
+    verify: bool = True
+    retries: int = 3
+    """
+    Three attempts to establish a connection.
+    """
 
 
 class BaseSettingsSchema(PydanticBaseSettings):
     """
-    Схема настроек с возможностью поиска через репозиторий.
+    Settings schema with repository-based search.
     """
 
     descendant_types: ClassVar[list[type[BaseSettingsSchema]]] = []
 
     def __init_subclass__(cls, **kwargs: Unpack[ConfigDict]) -> None:
         """
-        Добавляем настройки в репозиторий.
+        Add settings to the repository.
         """
         cls.descendant_types.append(cls)
 
@@ -176,14 +150,17 @@ class BaseSettingsSchema(PydanticBaseSettings):
 
 class CoreSettingsSchema(BaseSettingsSchema):
     """
-    Схема базовых настроек приложения.
+    Base application settings schema.
     """
 
     debug: bool
+    title: str
     base_url: str
     base_dir: Path = Path(os.getcwd())
     secret_key: str
-    cors_origins: Annotated[list[str], Field(default_factory=list)]
+    cors_origins: list[str]
+    environment: Literal['dev', 'test', 'prod']
+    redis_dsn: RedisDsn | None = None
     sentry_dsn: str | None = None
 
     model_config = SettingsConfigDict(

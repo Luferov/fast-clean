@@ -3,7 +3,7 @@ name = "fast-clean"
 version = "1.5.0"
 description = "FastAPI Clean Architecture implementation"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 authors = [
     {name = "Luferov Victor", email = "luferovvs@yandex.ru"},
     {name = "Orlov Artem", email = "squakrazv@yandex.ru"},
@@ -12,28 +12,29 @@ authors = [
 dependencies = [
     "aiobotocore>=2.23.2",
     "aiofiles>=24.1.0",
-    "aiokafka>=0.12.0",
     "aioprometheus>=23.12.0",
     "alembic>=1.16.2",
     "cryptography>=44.0.1",
     "dishka>=1.6.0",
     "fastapi>=0.115.8",
+    "faststream>=0.6.5",
     "fastapi-cache2[redis]>=0.2.2",
-    "faststream>=0.5.34",
     "flatten-dict>=0.4.2",
     "overrides>=7.7.0",
     "psycopg[binary]>=3.2.4",
     "pydantic>=2.10.6",
     "pydantic-settings>=2.8.0",
-    "pyyaml>=6.0.2",
     "sentry-sdk[fastapi]>=2.32.0",
     "sqlalchemy-utils>=0.41.2",
     "sqlalchemy[asyncio]>=2.0.38",
+    "starlette-exporter>=0.23.0",
+    "taskiq>=0.12.1",
     "stringcase>=1.2.0",
+    "structlog>=25.5.0",
     "typer>=0.15.1",
 ]
 
-[dependency-groups]
+[project.optional-dependencies]
 dev = [
     "docformatter>=1.7.5",
     "mypy>=1.15.0",
@@ -45,20 +46,26 @@ dev = [
     "pytest-mock>=3.14.0",
     "pytest-sugar>=1.0.0",
     "pytest-xdist>=3.6.1",
+    "respx>=0.22.0",
     "ruff>=0.11.6",
     "types-sqlalchemy-utils>=1.1.0",
     "types-aiobotocore[support]>=2.23.0",
     "types-sqlalchemy-utils>=1.1.0",
 ]
 
-[tool.ruff.format]
-quote-style = "single"
 
 [tool.ruff]
 line-length = 120
-lint.extend-select = ["Q"]
+indent-width = 4
+target-version = "py313"
 
-lint.select = [
+
+[tool.ruff.format]
+quote-style = "single"
+
+
+[tool.ruff.lint]
+select = [
     "E", # pycodestyle errors (settings from FastAPI, thanks, @tiangolo!)
     "W", # pycodestyle warnings
     "F", # pyflakes
@@ -66,18 +73,10 @@ lint.select = [
     "C", # flake8-comprehensions
     "B", # flake8-bugbear
 ]
-lint.ignore = [
-    "E501", # line too long, handled by black
+ignore = [
     "C901", # too complex
 ]
 
-src = ["fast_clean", "tests"]
-exclude = [".venv", ".git", "__pycache__", "build", "dist", "venv"]
-
-target-version = "py311"
-
-[tool.ruff.lint.flake8-quotes]
-inline-quotes = "single"
 
 [tool.ruff.lint.isort]
 order-by-type = true
@@ -92,14 +91,22 @@ section-order = [
 ]
 known-first-party = []
 
+
 [tool.pytest.ini_options]
 addopts = "-vvv"
 testpaths = "tests"
 
+
 [tool.mypy]
-files = ["fast_clean", "tests"]
+files = ["tochka_eb_core", "tests"]
 disable_error_code = "import-untyped"
+plugins = "pydantic.mypy"
 strict_optional = false
+
+[tool.coverage.run]
+omit = [
+    "__dishka_factory_*"
+]
 
 [tool.semantic_release]
 version_toml = [
@@ -109,3 +116,9 @@ commit_message = "chore(release): {version} [skip ci]"
 branch = "main"
 upload_to_pypi = false
 upload_to_release = true
+
+[dependency-groups]
+dev = [
+    "anyio>=4.12.1",
+    "types-aiobotocore-s3>=3.1.0",
+]

@@ -1,19 +1,20 @@
 """
-Модуль, содержащий тестовые модели.
+Module containing test models.
 """
 
 from __future__ import annotations
 
 import uuid
 
-from fast_clean.db import BaseUUID
 from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from fast_clean.db import Base
 
-class SeedChildModel(BaseUUID):
+
+class SeedChildModel(Base):
     """
-    Дочерняя тестовая модель для тестирования загрузки данных из файлов.
+    Child test model for testing data loading from files.
     """
 
     __tablename__ = 'seed_child_model'
@@ -26,9 +27,9 @@ class SeedChildModel(BaseUUID):
     parent: Mapped[SeedParentModel] = relationship(back_populates='children')
 
 
-class SeedParentModel(BaseUUID):
+class SeedParentModel(Base):
     """
-    Родительская тестовая модель для тестирования загрузки данных из файлов.
+    Parent test model for testing data loading from files.
     """
 
     __tablename__ = 'seed_parent_model'

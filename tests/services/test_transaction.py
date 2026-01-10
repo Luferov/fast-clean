@@ -1,5 +1,5 @@
 """
-Модуль, содержащий тесты сервиса транзакций.
+Module containing tests for the transaction service.
 """
 
 from fast_clean.services.transaction import TransactionService
@@ -7,13 +7,13 @@ from fast_clean.services.transaction import TransactionService
 
 class TestTransactionService:
     """
-    Тесты сервиса транзакций.
+    Tests for the transaction service.
     """
 
     @staticmethod
     async def test_begin(transaction_service: TransactionService) -> None:
         """
-        Тестируем метод `begin`.
+        Test the `begin` method.
         """
         assert not transaction_service.session.in_transaction()
         async with transaction_service.begin():

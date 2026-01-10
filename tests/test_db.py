@@ -1,24 +1,25 @@
 """
-Модуль, содержащий тесты функционала, связанного с базой данных.
+Module containing tests for database-related functionality.
 """
 
 from typing import cast
 from unittest.mock import MagicMock
 
 import sqlalchemy as sa
-from fast_clean.db import SessionManagerImpl
 from pytest_mock import MockerFixture
+
+from fast_clean.db import SessionManagerImpl
 
 
 class TestSessionManager:
     """
-    Тесты менеджера сессий.
+    Session manager tests.
     """
 
     @staticmethod
     async def test_get_session_begin(session_manager: SessionManagerImpl) -> None:
         """
-        Тестируем запуск транзакции в методе `begin`.
+        Test starting a transaction in the `begin` method.
         """
         assert not session_manager.session.in_transaction()
         async with session_manager.get_session():
@@ -28,7 +29,7 @@ class TestSessionManager:
     @staticmethod
     async def test_get_session_immediate(session_manager: SessionManagerImpl, mocker: MockerFixture) -> None:
         """
-        Тестируем запуск транзакции в методе `begin` с параметром `immediate=True`.
+        Test starting a transaction in the `begin` method with `immediate=True`.
         """
         mocker.patch.object(session_manager.session, 'execute')
         assert not session_manager.session.in_transaction()

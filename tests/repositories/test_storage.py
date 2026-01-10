@@ -1,5 +1,5 @@
 """
-Модуль, содержащий тесты репозиториев файлового хранилища.
+Module containing file storage repository tests.
 """
 
 import io
@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import cast
 
 import pytest
+
 from fast_clean.repositories.storage import StorageRepositoryProtocol, StreamReadProtocol
 
 from .schemas import DirectorySchema, FileSchema
@@ -41,14 +42,14 @@ WALK_TYPE = Callable[[DirectorySchema], Iterator[tuple[str | Path, DirectorySche
 )
 class TestStorageRepositories:
     """
-    Тесты репозиториев файлового хранилища.
+    File storage repository tests.
     """
 
     @staticmethod
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
     async def test_exists(storage_repository: StorageRepositoryProtocol, walk: WALK_TYPE) -> None:
         """
-        Тестируем метод `exists`.
+        Test the `exists` method.
         """
         async with storage_repository:
             for path, item in walk(DIRECTORY):
@@ -60,7 +61,7 @@ class TestStorageRepositories:
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
     async def test_listdir(storage_repository: StorageRepositoryProtocol, walk: WALK_TYPE) -> None:
         """
-        Тестируем метод `listdir`.
+        Test the `listdir` method.
         """
         for path, item in walk(DIRECTORY):
             if isinstance(item, DirectorySchema):
@@ -77,7 +78,7 @@ class TestStorageRepositories:
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
     async def test_is_file(storage_repository: StorageRepositoryProtocol, walk: WALK_TYPE) -> None:
         """
-        Тестируем метод `is_file`.
+        Test the `is_file` method.
         """
         async with storage_repository:
             for path, item in walk(DIRECTORY):
@@ -90,7 +91,7 @@ class TestStorageRepositories:
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
     async def test_is_dir(storage_repository: StorageRepositoryProtocol, walk: WALK_TYPE) -> None:
         """
-        Тестируем метод `is_dir`.
+        Test the `is_dir` method.
         """
         async with storage_repository:
             for path, item in walk(DIRECTORY):
@@ -103,7 +104,7 @@ class TestStorageRepositories:
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
     async def test_read(storage_repository: StorageRepositoryProtocol, walk: WALK_TYPE) -> None:
         """
-        Тестируем метод `read`.
+        Test the `read` method.
         """
         async with storage_repository:
             for path, item in walk(DIRECTORY):
@@ -114,7 +115,7 @@ class TestStorageRepositories:
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
     async def test_stream_read(storage_repository: StorageRepositoryProtocol, walk: WALK_TYPE) -> None:
         """
-        Тестируем метод `stream_read`.
+        Test the `stream_read` method.
         """
         async with storage_repository:
             for path, item in walk(DIRECTORY):
@@ -131,7 +132,7 @@ class TestStorageRepositories:
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
     async def test_straming_read(storage_repository: StorageRepositoryProtocol, walk: WALK_TYPE) -> None:
         """
-        Тестируем метод `straming_read`.
+        Test the `straming_read` method.
         """
         async with storage_repository:
             for path, item in walk(DIRECTORY):
@@ -143,7 +144,7 @@ class TestStorageRepositories:
     @pytest.mark.parametrize('new_file', [NEW_FILE, Path(NEW_FILE)])
     async def test_write(cls, storage_repository: StorageRepositoryProtocol, new_file: str | Path) -> None:
         """
-        Тестируем метод `write`.
+        Test the `write` method.
         """
         async with storage_repository:
             assert not await storage_repository.exists(new_file)
@@ -156,7 +157,7 @@ class TestStorageRepositories:
     @pytest.mark.parametrize('new_file', [NEW_FILE, Path(NEW_FILE)])
     async def test_stream_write(cls, storage_repository: StorageRepositoryProtocol, new_file: str | Path) -> None:
         """
-        Тестируем метод `stream_write`.
+        Test the `stream_write` method.
         """
         async with storage_repository:
             assert not await storage_repository.exists(new_file)
@@ -173,7 +174,7 @@ class TestStorageRepositories:
     @pytest.mark.parametrize('walk', [walk_str, walk_path])
     async def test_delete(storage_repository: StorageRepositoryProtocol, walk: WALK_TYPE) -> None:
         """
-        Тестируем метод `delete`.
+        Test the `delete` method.
         """
         async with storage_repository:
             for path, item in walk(DIRECTORY):

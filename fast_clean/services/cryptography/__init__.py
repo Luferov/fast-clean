@@ -1,5 +1,5 @@
 """
-Пакет, содержащий сервис криптографии для шифрования секретных параметров.
+Package containing the cryptography service for encrypting secret parameters.
 """
 
 from typing import Protocol, Self
@@ -11,25 +11,25 @@ from .enums import CryptographicAlgorithmEnum
 
 class CryptographyServiceProtocol(Protocol):
     """
-    Протокол сервиса криптографии для шифрования секретных параметров.
+    Cryptography service protocol for encrypting secret parameters.
     """
 
     def encrypt(self: Self, data: str) -> str:
         """
-        Зашифровываем данные.
+        Encrypt data.
         """
         ...
 
     def decrypt(self: Self, encrypted_data: str) -> str:
         """
-        Расшифровываем данные.
+        Decrypt data.
         """
         ...
 
 
 class CryptographyServiceFactory:
     """
-    Фабрика сервисов криптографии для шифрования секретных параметров.
+    Cryptography services factory for encrypting secret parameters.
     """
 
     def __init__(self, secret_key: str) -> None:
@@ -37,7 +37,7 @@ class CryptographyServiceFactory:
 
     async def make(self: Self, algorithm: CryptographicAlgorithmEnum) -> CryptographyServiceProtocol:
         """
-        Создаем сервис криптографии для шифрования секретных параметров.
+        Create a cryptography service for encrypting secret parameters.
         """
         match algorithm:
             case CryptographicAlgorithmEnum.AES_GCM:

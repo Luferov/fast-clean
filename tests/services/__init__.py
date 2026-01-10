@@ -1,3 +1,3 @@
 """
-Пакет, содержащий тесты сервисов.
+Package containing service tests.
 """

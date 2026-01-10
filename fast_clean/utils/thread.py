@@ -1,5 +1,5 @@
 """
-Модель запуска тяжелых операций в ThreadPoolExecutor.
+Model for running heavy operations in ThreadPoolExecutor.
 """
 
 import asyncio
@@ -14,7 +14,7 @@ P = ParamSpec('P')
 
 async def run_in_threadpool(fn: Callable[P, R], *args: P.args, **kwargs: P.kwargs) -> R:
     """
-    Запуск функции в отдельном потоке.
+    Run a function in a separate thread.
     """
     kwargs_fn = partial(fn, *args, **kwargs)
     loop = asyncio.get_running_loop()

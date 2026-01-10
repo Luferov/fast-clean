@@ -1,13 +1,14 @@
 """
-Модуль, содержащий настройки тестов.
+Module containing test settings.
 """
 
 from pathlib import Path
 from typing import Literal
 
-from fast_clean.settings import CoreDbSettingsSchema, CoreKafkaSettingsSchema, CoreS3SettingsSchema
 from pydantic import BaseModel, RedisDsn
 from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, SettingsConfigDict
+
+from fast_clean.settings import CoreDbSettingsSchema, CoreS3SettingsSchema
 
 
 class CoreRedisSettingsSchema(BaseModel):
@@ -16,7 +17,7 @@ class CoreRedisSettingsSchema(BaseModel):
 
 class CoreCacheSettingsSchema(BaseModel):
     """
-    Схема настроек кеша.
+    Cache settings schema.
     """
 
     provider: Literal['in_memory', 'redis'] = 'in_memory'
@@ -28,7 +29,7 @@ class CoreCacheSettingsSchema(BaseModel):
 
 class StorageSettingsSchema(BaseModel):
     """
-    Настройки для хранилища.
+    Storage settings.
     """
 
     dir: Path = Path(__file__).resolve().parent / 'storage'
@@ -37,7 +38,7 @@ class StorageSettingsSchema(BaseModel):
 
 class SettingsSchema(BaseSettings):
     """
-    Настройки тестов.
+    Test settings.
     """
 
     base_dir: Path = Path(__file__).resolve().parent
@@ -45,7 +46,6 @@ class SettingsSchema(BaseSettings):
 
     db: CoreDbSettingsSchema
     storage: StorageSettingsSchema
-    kafka: CoreKafkaSettingsSchema
     cache: CoreCacheSettingsSchema
 
     model_config = SettingsConfigDict(

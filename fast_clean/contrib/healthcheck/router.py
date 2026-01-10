@@ -1,5 +1,5 @@
 """
-Роутер приложения healthcheck.
+Healthcheck application router.
 """
 
 from fastapi import APIRouter
@@ -12,6 +12,6 @@ router = APIRouter(prefix='/health', tags=['Healthcheck'], include_in_schema=Fal
 @router.get('')
 async def get_healthcheck_status() -> StatusOkResponseSchema:
     """
-    Получаем статус сервера.
+    Get server status.
     """
     return StatusOkResponseSchema()

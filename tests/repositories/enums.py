@@ -1,5 +1,5 @@
 """
-Модуль, содержащий тестовые перечисления.
+Module containing test enums.
 """
 
 from enum import StrEnum, auto
@@ -7,7 +7,7 @@ from enum import StrEnum, auto
 
 class CrudModelTypeEnum(StrEnum):
     """
-    Тип модели для тестирования репозитория.
+    Model type for repository testing.
     """
 
     PARENT = auto()

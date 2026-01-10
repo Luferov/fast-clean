@@ -1,5 +1,5 @@
 """
-Модуль, содержащий сервис распределенной блокировки.
+Module containing the distributed lock service.
 """
 
 from collections.abc import AsyncIterator
@@ -14,7 +14,7 @@ from fast_clean.exceptions import LockError
 
 class LockServiceProtocol(Protocol):
     """
-    Протокол сервиса распределенной блокировки.
+    Distributed lock service protocol.
     """
 
     def lock(
@@ -26,14 +26,14 @@ class LockServiceProtocol(Protocol):
         blocking_timeout: float | None = None,
     ) -> AsyncContextManager[None]:
         """
-        Осуществляем распределенную блокировку.
+        Perform distributed locking.
         """
         ...
 
 
 class RedisLockService:
     """
-    Сервис распределенной блокировки с помощью Redis.
+    Distributed lock service using Redis.
     """
 
     def __init__(self, redis: aioredis.Redis) -> None:
@@ -49,7 +49,7 @@ class RedisLockService:
         blocking_timeout: float | None = None,
     ) -> AsyncIterator[None]:
         """
-        Осуществляем распределенную блокировку.
+        Perform distributed locking.
         """
         try:
             async with self.redis.lock(name, timeout=timeout, sleep=sleep, blocking_timeout=blocking_timeout):

@@ -1,8 +1,9 @@
 """
-Модуль, содержащий тесты сервисов криптографии.
+Module containing cryptography service tests.
 """
 
 import pytest
+
 from fast_clean.services.cryptography import CryptographyServiceProtocol
 
 
@@ -13,7 +14,7 @@ from fast_clean.services.cryptography import CryptographyServiceProtocol
 )
 class TestCryptographyServices:
     """
-    Тесты сервисов криптографии.
+    Cryptography service tests.
     """
 
     SECRET_VALUE = 'secret_value'
@@ -24,7 +25,7 @@ class TestCryptographyServices:
         cryptography_service: CryptographyServiceProtocol,
     ) -> None:
         """
-        Тестируем метод `encrypt` и `decrypt`.
+        Test the `encrypt` and `decrypt` methods.
         """
         encrypted_value = cryptography_service.encrypt(cls.SECRET_VALUE)
         assert cryptography_service.decrypt(encrypted_value) == cls.SECRET_VALUE

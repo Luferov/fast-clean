@@ -1,5 +1,5 @@
 """
-Модуль, содержащий перечисления.
+Module containing enums.
 """
 
 from enum import StrEnum, auto
@@ -8,8 +8,10 @@ from typing import Self
 
 class CascadeEnum(StrEnum):
     """
-    Настройки каскадного поведения для SQLAlchemy.
+    Cascade behavior settings for SQLAlchemy.
     """
+
+    CASCADE = 'CASCADE'
 
     SAVE_UPDATE = 'save-update'
     MERGE = 'merge'
@@ -30,7 +32,7 @@ class CascadeEnum(StrEnum):
 
 class ModelActionEnum(StrEnum):
     """
-    Действие с моделью.
+    Action on a model.
     """
 
     INSERT = auto()

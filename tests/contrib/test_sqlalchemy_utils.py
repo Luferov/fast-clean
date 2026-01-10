@@ -4,8 +4,9 @@ from unittest.mock import Mock
 import pytest
 import sqlalchemy_utils
 from alembic.autogenerate.api import AutogenContext
-from fast_clean.contrib.sqlalchemy_utils.utils import render_item
 from sqlalchemy import LargeBinary, String
+
+from fast_clean.contrib.sqlalchemy_utils.utils import render_item
 
 
 def mock_autogen_context():
@@ -19,7 +20,7 @@ class ChoicesTypeEnum(StrEnum):
     B = auto()
 
 
-# Тесты для ChoiceType
+# Tests for ChoiceType
 class TestRenderItemChoiceType:
     @pytest.fixture
     def choice_type(self):
@@ -41,7 +42,7 @@ class TestRenderItemChoiceType:
         assert result == 'sqlalchemy_utils.types.ChoiceType(ChoicesTypeEnum, impl=sa.LargeBinary())'
 
 
-# Тесты для JSONType
+# Tests for JSONType
 class TestRenderItemJSONType:
     def test_json_type_render(self):
         context = mock_autogen_context()
@@ -51,7 +52,7 @@ class TestRenderItemJSONType:
         assert context.imports == {'import sqlalchemy_utils'}
 
 
-# Тесты для UUIDType
+# Tests for UUIDType
 class TestRenderItemUUIDType:
     @pytest.mark.parametrize(
         'binary, expected',
@@ -68,7 +69,7 @@ class TestRenderItemUUIDType:
         assert context.imports == {'import sqlalchemy_utils'}
 
 
-# Тесты для неподдерживаемых типов
+# Tests for unsupported types
 class TestRenderItemUnsupported:
     def test_unsupported_type(self):
         context = mock_autogen_context()

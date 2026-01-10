@@ -1,5 +1,5 @@
 """
-Модуль, содержащий функционал, связанный с базой данных.
+Module containing database-related functionality.
 """
 
 from __future__ import annotations
@@ -22,7 +22,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.sql import func
 from sqlalchemy_utils.types import UUIDType
 
-from .settings import CoreDbSettingsSchema, CoreSettingsSchema
+from .settings import CoreDbSettingsSchema
 
 if TYPE_CHECKING:
     from .repositories import SettingsRepositoryProtocol
@@ -47,7 +47,7 @@ def make_async_engine(
     disable_prepared_statements: bool = True,
 ) -> AsyncEngine:
     """
-    Создаем асинхронный движок.
+    Create an async engine.
     """
     connect_args: dict[str, Any] = {}
     if disable_prepared_statements:
@@ -69,7 +69,7 @@ def make_async_session_factory(
     disable_prepared_statements: bool = True,
 ) -> async_sessionmaker[AsyncSession]:
     """
-    Создаем фабрику асинхронных сессий.
+    Create an async session factory.
     """
     asyncio_engine = make_async_engine(
         db_dsn,
@@ -81,9 +81,9 @@ def make_async_session_factory(
     return async_sessionmaker(asyncio_engine, expire_on_commit=False, autoflush=False)
 
 
-class Base(AsyncAttrs, DeclarativeBase):
+class BaseParent(AsyncAttrs, DeclarativeBase):
     """
-    Базовая родительская модель.
+    Base parent model.
     """
 
     __abstract__ = True
@@ -91,9 +91,9 @@ class Base(AsyncAttrs, DeclarativeBase):
     metadata = metadata
 
 
-class BaseUUID(Base):
+class Base(BaseParent):
     """
-    Базовая родительская модель нового типа.
+    Base parent model of the new type.
     """
 
     __abstract__ = True
@@ -106,9 +106,9 @@ class BaseUUID(Base):
     )
 
 
-class BaseInt(Base):
+class BaseInt(BaseParent):
     """
-    Базовая родительская модель старого типа.
+    Base parent model of the old type.
     """
 
     __abstract__ = True
@@ -118,7 +118,7 @@ class BaseInt(Base):
 
 class SessionFactory:
     """
-    Фабрика сессий.
+    Session factory.
     """
 
     async_session_factory: async_sessionmaker[AsyncSession] | None = None
@@ -129,7 +129,7 @@ class SessionFactory:
         cls, settings_repository: SettingsRepositoryProtocol
     ) -> AsyncIterator[AsyncSession]:
         """
-        Создаем асинхронную сессию с помощью статической фабрики.
+        Create an async session using the static factory.
         """
         if cls.async_session_factory is None:
             cls.async_session_factory = await cls.make_async_session_factory(settings_repository)
@@ -141,7 +141,7 @@ class SessionFactory:
         cls, settings_repository: SettingsRepositoryProtocol
     ) -> async_sessionmaker[AsyncSession]:
         """
-        Создаем асинхронную сессию с помощью динамической фабрики.
+        Create an async session using the dynamic factory.
         """
         return await cls.make_async_session_factory(settings_repository)
 
@@ -150,14 +150,13 @@ class SessionFactory:
         settings_repository: SettingsRepositoryProtocol,
     ) -> async_sessionmaker[AsyncSession]:
         """
-        Создаем фабрику асинхронных сессий.
+        Create an async session factory.
         """
-        settings = await settings_repository.get(CoreSettingsSchema)
         db_settings = await settings_repository.get(CoreDbSettingsSchema)
         return make_async_session_factory(
             db_settings.dsn,
             scheme=db_settings.scheme,
-            echo=settings.debug,
+            echo=db_settings.echo,
             pool_pre_ping=db_settings.pool_pre_ping,
             disable_prepared_statements=db_settings.disable_prepared_statements,
         )
@@ -165,19 +164,19 @@ class SessionFactory:
 
 class SessionManagerProtocol(Protocol):
     """
-    Протокол менеджера сессий.
+    Session manager protocol.
     """
 
     def get_session(self: Self, immediate: bool = True) -> AsyncContextManager[AsyncSession]:
         """
-        Получаем сессию для выполнения запроса.
+        Get a session for executing a query.
         """
         ...
 
 
 class SessionManagerImpl:
     """
-    Реализация менеджера сессий.
+    Session manager implementation.
     """
 
     def __init__(self, session: AsyncSession) -> None:
@@ -186,7 +185,7 @@ class SessionManagerImpl:
     @asynccontextmanager
     async def get_session(self: Self, immediate: bool = True) -> AsyncIterator[AsyncSession]:
         """
-        Получаем сессию для выполнения запроса.
+        Get a session for executing a query.
         """
         if self.session.in_transaction():
             yield self.session

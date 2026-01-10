@@ -1,5 +1,5 @@
 """
-Модуль, содержащий тестовые схемы.
+Module containing test schemas.
 """
 
 import uuid
@@ -9,7 +9,7 @@ from pydantic import BaseModel
 
 class ChildModelSchema(BaseModel):
     """
-    Схема дочерней тестовой модели для тестирования загрузки данных из файлов.
+    Schema of the child test model for testing data loading from files.
     """
 
     id: uuid.UUID
@@ -21,7 +21,7 @@ class ChildModelSchema(BaseModel):
 
 class ParentModelSchema(BaseModel):
     """
-    Схема родительской тестовой модели для тестирования загрузки данных из файлов.
+    Schema of the parent test model for testing data loading from files.
     """
 
     id: uuid.UUID

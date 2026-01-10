@@ -1,5 +1,5 @@
 """
-Модуль, содержащий схемы исключений.
+Module containing exception schemas.
 """
 
 from pydantic import BaseModel
@@ -7,18 +7,18 @@ from pydantic import BaseModel
 
 class BusinessLogicExceptionSchema(BaseModel):
     """
-    Схема базового исключения бизнес-логики.
+    Base business logic exception schema.
     """
 
     type: str
-    msg: str
+    message: str
     traceback: str | None
 
 
 class ModelAlreadyExistsErrorSchema(BusinessLogicExceptionSchema):
     """
-    Схема ошибки, возникающей при попытке создать модель с существующим уникальным
-    полем.
+    Schema of the error raised when attempting to create a model with an existing unique
+    field.
     """
 
     field: str
@@ -26,7 +26,7 @@ class ModelAlreadyExistsErrorSchema(BusinessLogicExceptionSchema):
 
 class ValidationErrorSchema(BusinessLogicExceptionSchema):
     """
-    Схема ошибки валидации.
+    Validation error schema.
     """
 
     fields: list[str]

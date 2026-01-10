@@ -1,11 +1,10 @@
 """
-Модуль, содержащий команды криптографии для шифрования секретных параметров.
+Module containing cryptography commands for encrypting secret parameters.
 """
 
 from typing import Annotated
 
 import typer
-from rich import print
 
 from fast_clean.container import get_container
 from fast_clean.services import CryptographicAlgorithmEnum, CryptographyServiceFactory
@@ -14,13 +13,13 @@ from fast_clean.utils import typer_async
 
 @typer_async
 async def encrypt(
-    data: Annotated[str, typer.Argument(help='Данные для шифровки.')],
+    data: Annotated[str, typer.Argument(help='Data to encrypt.')],
     algorithm: Annotated[
-        CryptographicAlgorithmEnum, typer.Option(help='Криптографический алгоритм')
+        CryptographicAlgorithmEnum, typer.Option(help='Cryptographic algorithm')
     ] = CryptographicAlgorithmEnum.AES_GCM,
 ) -> None:
     """
-    Зашифровываем данные.
+    Encrypt data.
     """
     async with get_container() as container:
         cryptography_service_factory = await container.get(CryptographyServiceFactory)
@@ -30,13 +29,13 @@ async def encrypt(
 
 @typer_async
 async def decrypt(
-    data: Annotated[str, typer.Argument(help='Данные для расшифровки.')],
+    data: Annotated[str, typer.Argument(help='Data to decrypt.')],
     algorithm: Annotated[
-        CryptographicAlgorithmEnum, typer.Option(help='Криптографический алгоритм')
+        CryptographicAlgorithmEnum, typer.Option(help='Cryptographic algorithm')
     ] = CryptographicAlgorithmEnum.AES_GCM,
 ) -> None:
     """
-    Расшифровываем данные.
+    Decrypt data.
     """
     async with get_container() as container:
         cryptography_service_factory = await container.get(CryptographyServiceFactory)
@@ -46,7 +45,7 @@ async def decrypt(
 
 def use_cryptography(app: typer.Typer) -> None:
     """
-    Регистрируем команды криптографии для шифрования секретных параметров.
+    Register cryptography commands for encrypting secret parameters.
     """
 
     app.command()(encrypt)

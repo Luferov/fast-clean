@@ -1,7 +1,7 @@
 """
-Пакет, содержащий репозиторий файлового хранилища.
+Package containing the file storage repository.
 
-Представлено 2 реализации:
+Two implementations are provided:
 - Local
 - S3
 """
@@ -24,60 +24,60 @@ from .schemas import (
 
 class StorageRepositoryProtocol(Protocol):
     """
-    Протокол репозитория файлового хранилища.
+    File storage repository protocol.
     """
 
     async def __aenter__(self: Self) -> Self:
         """
-        Вход в контекст менеджера.
+        Enter the context manager.
         """
         ...
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         """
-        Выход из контекст менеджера.
+        Exit the context manager.
         """
         ...
 
     async def exists(self: Self, path: str | Path) -> bool:
         """
-        Проверяем существует ли файл.
+        Check whether the file exists.
         """
         ...
 
     async def listdir(self: Self, path: str | Path) -> list[str]:
         """
-        Получаем список файлов и директорий в заданной директории.
+        Get a list of files and directories in the specified directory.
         """
         ...
 
     async def is_file(self: Self, path: str | Path) -> bool:
         """
-        Проверяем находится ли файл по пути.
+        Check whether a file exists at the path.
         """
         ...
 
     async def is_dir(self: Self, path: str | Path) -> bool:
         """
-        Проверяем находится ли директория по пути.
+        Check whether a directory exists at the path.
         """
         ...
 
     async def read(self: Self, path: str | Path) -> bytes:
         """
-        Читаем содержимое файла.
+        Read file contents.
         """
         ...
 
     def stream_read(self: Self, path: str | Path) -> AsyncContextManager[StreamReaderProtocol]:
         """
-        Читаем содержимое файла в потоковом режиме.
+        Read file contents in streaming mode.
         """
         ...
 
     async def write(self: Self, path: str | Path, content: str | bytes) -> None:
         """
-        Создаем файл или переписываем существующий.
+        Create a file or overwrite an existing one.
         """
         ...
 
@@ -87,43 +87,43 @@ class StorageRepositoryProtocol(Protocol):
         stream: StreamReadProtocol,
     ) -> None:
         """
-        Создаем файл или переписываем существующий в потоковом режиме.
+        Create a file or overwrite an existing one in streaming mode.
         """
         ...
 
     def straming_read(self: Self, path: str | Path) -> AsyncIterator[bytes]:
         """
-        Возвращаем асинхронные итератор потока байт.
+        Return an asynchronous byte stream iterator.
         """
         ...
 
     async def delete(self: Self, path: str | Path) -> None:
         """
-        Удаляем файл.
+        Delete a file.
         """
         ...
 
 
 class StorageRepositoryFactoryProtocol(Protocol):
     """
-    Протокол фабрики репозиториев файлового хранилища.
+    File storage repository factory protocol.
     """
 
     async def make(self, storage_type: StorageTypeEnum, params: StorageParamsSchema) -> StorageRepositoryProtocol:
         """
-        Создаем репозиторий файлового хранилища.
+        Create a file storage repository.
         """
         ...
 
 
 class StorageRepositoryFactoryImpl:
     """
-    Реализация фабрики репозиториев файлового хранилища.
+    File storage repository factory implementation.
     """
 
     async def make(self: Self, storage_type: StorageTypeEnum, params: StorageParamsSchema) -> StorageRepositoryProtocol:
         """
-        Создаем репозиторий файлового хранилища.
+        Create a file storage repository.
         """
         if storage_type == StorageTypeEnum.S3 and isinstance(params, S3StorageParamsSchema):
             return S3StorageRepository(params)

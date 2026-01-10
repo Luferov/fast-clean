@@ -1,5 +1,5 @@
 """
-Модуль, содержащий схемы файлового хранилища.
+Module containing file storage schemas.
 """
 
 from pathlib import Path
@@ -9,11 +9,7 @@ from pydantic import BaseModel
 
 class S3StorageParamsSchema(BaseModel):
     """
-    Параметры настроек для S3Storage.
-    """
-
-    """
-    Параметры настроек для S3Storage.
+    Settings parameters for S3Storage.
     """
 
     endpoint: str
@@ -27,7 +23,7 @@ class S3StorageParamsSchema(BaseModel):
 
 class LocalStorageParamsSchema(BaseModel):
     """
-    Параметры настроек для LocalStorage.
+    Settings parameters for LocalStorage.
     """
 
     path: Path

@@ -1,14 +1,14 @@
 """
-Модуль для работы с датой и временем.
+Module for working with date and time.
 """
 
 import datetime as dt
 
 
-def ts_now() -> float:
+def ts_now(*, tz=dt.timezone.utc) -> float:
     """
-    Возвращает текущий timestamp по GMT.
+    Return the current GMT timestamp.
 
-    :return: Значение в секундах
+    :return: Value in seconds
     """
-    return dt.datetime.now(dt.timezone.utc).timestamp()
+    return dt.datetime.now(tz).timestamp()

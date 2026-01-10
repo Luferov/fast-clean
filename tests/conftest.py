@@ -1,5 +1,5 @@
 """
-Модуль, содержащий фикстуры для тестов.
+Module containing fixtures for tests.
 """
 
 import asyncio
@@ -11,6 +11,7 @@ from typing import AsyncIterator
 import pytest
 from dishka import AsyncContainer
 from dotenv import load_dotenv
+
 from fast_clean.container import ContainerManager
 from fast_clean.db import SessionManagerImpl, make_async_session_factory
 
@@ -20,7 +21,7 @@ from .settings import SettingsSchema
 @pytest.fixture(scope='session', autouse=True)
 def env() -> None:
     """
-    Загружаем переменные окружения из файла при наличии и перезагружаем настройки Prefect.
+    Load environment variables from a file if present and reload Prefect settings.
     """
     env_path = Path(__file__).parent / '.env'
     if env_path.exists():
@@ -30,7 +31,7 @@ def env() -> None:
 @pytest.fixture(scope='session')
 def event_loop() -> Iterator[AbstractEventLoop]:
     """
-    Исправляет ошибку `RuntimeError: Event loop is closed`, возникающую из-за aioredis.
+    Fixes the `RuntimeError: Event loop is closed` error caused by aioredis.
     https://stackoverflow.com/questions/61022713/pytest-asyncio-has-a-closed-event-loop-but-only-when-running-all-tests
     """
     try:
@@ -44,7 +45,7 @@ def event_loop() -> Iterator[AbstractEventLoop]:
 @pytest.fixture(scope='session')
 def settings() -> SettingsSchema:
     """
-    Получаем настройки.
+    Get settings.
     """
     return SettingsSchema()  # type: ignore
 
@@ -52,7 +53,7 @@ def settings() -> SettingsSchema:
 @pytest.fixture
 async def session_manager(settings: SettingsSchema) -> SessionManagerImpl:
     """
-    Получаем менеджер сессий.
+    Get the session manager.
     """
     async with make_async_session_factory(settings.db.dsn)() as session:
         return SessionManagerImpl(session)
@@ -61,8 +62,13 @@ async def session_manager(settings: SettingsSchema) -> SessionManagerImpl:
 @pytest.fixture
 async def container() -> AsyncIterator[AsyncContainer]:
     """
-    Получаем контейнер зависимостей.
+    Get the dependency container.
     """
     container = ContainerManager.create()
     async with container() as nested_container:
         yield nested_container
+
+
+@pytest.fixture(scope='session', autouse=True)
+def anyio_backend() -> str:
+    return 'asyncio'

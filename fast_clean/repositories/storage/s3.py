@@ -1,5 +1,5 @@
 """
-Модуль содержит имплементация работы с репозиторием по средствам протокола S3.
+Module contains an implementation for working with a repository via the S3 protocol.
 """
 
 from collections.abc import AsyncIterator
@@ -25,7 +25,7 @@ else:
 
 class S3StorageRepository:
     """
-    Репозиторий хранилища S3 с использованием aiobotocore.
+    S3 storage repository using aiobotocore.
     """
 
     def __init__(self, params: S3StorageParamsSchema) -> None:
@@ -51,7 +51,7 @@ class S3StorageRepository:
 
     async def __aexit__(self: Self, exc_type, exc_val, exc_tb) -> None:
         """
-        Выход из контектсного менеджера сессии.
+        Exit the session context manager.
         """
         if self.client:
             await self.client.__aexit__(exc_type, exc_val, exc_tb)
@@ -71,7 +71,7 @@ class S3StorageRepository:
 
     async def listdir(self: Self, path: str | Path) -> list[str]:
         """
-        Получаем список файлов и директорий в указанной лиректории.
+        Get a list of files and directories in the specified directory.
         """
         assert self.client
         prefix = self.get_str_path(path)
@@ -88,13 +88,13 @@ class S3StorageRepository:
 
     async def is_file(self: Self, path: str | Path) -> bool:
         """
-        Проверяем, является ли путь файлом.
+        Check whether the path is a file.
         """
         return await self.exists(path)
 
     async def is_dir(self: Self, path: str | Path) -> bool:
         """
-        Проверяем, является ли путь дирректорией.
+        Check whether the path is a directory.
         """
         assert self.client
         prefix = self.get_str_path(path)
@@ -110,7 +110,7 @@ class S3StorageRepository:
 
     async def read(self: Self, path: str | Path) -> bytes:
         """
-        Читаем содержимое файла.
+        Read file contents.
         """
         assert self.client
         key = self.get_str_path(path)
@@ -120,7 +120,7 @@ class S3StorageRepository:
 
     async def write(self: Self, path: str | Path, content: str | bytes) -> None:
         """
-        Создаем файл или перезаписываем существующий.
+        Create a file or overwrite an existing one.
         """
         assert self.client
         key = self.get_str_path(path)
@@ -130,7 +130,7 @@ class S3StorageRepository:
     @asynccontextmanager
     async def stream_read(self: Self, path: str | Path) -> AsyncIterator[StreamReaderProtocol]:
         """
-        Читаем содержимое в потоковом режиме.
+        Read content in streaming mode.
         """
         assert self.client
         key = self.get_str_path(path)
@@ -146,14 +146,14 @@ class S3StorageRepository:
 
     async def stream_write(self: Self, path: str | Path, stream: StreamReadProtocol) -> None:
         """
-        Создаем поток на запись файла и перезаписываем существующий, если он есть.
+        Create a stream for writing a file and overwrite the existing one if present.
         """
         assert self.client
         await self.client.put_object(Bucket=self.bucket, Key=self.get_str_path(path), Body=cast(StreamingBody, stream))
 
     async def delete(self: Self, path: str | Path) -> None:
         """
-        Удаление файла.
+        Delete file.
         """
         assert self.client
         key = self.get_str_path(path)
@@ -162,7 +162,7 @@ class S3StorageRepository:
     @staticmethod
     def get_str_path(path: str | Path) -> str:
         """
-        Получаем путь в виде строки.
+        Get the path as a string.
         """
         if isinstance(path, Path):
             return '' if path == Path('') else str(path)

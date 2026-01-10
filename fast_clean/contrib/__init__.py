@@ -1,3 +1,3 @@
 """
-Пакет, содержащий приложения.
+Package containing applications.
 """

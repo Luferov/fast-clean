@@ -1,5 +1,5 @@
 """
-Модуль, содержащий тесты запуска тяжелых операций в ProcessPoolExecutor.
+Module containing tests for running heavy operations in ProcessPoolExecutor.
 """
 
 import fast_clean.utils.process as process
@@ -7,14 +7,14 @@ import fast_clean.utils.process as process
 
 def add(a: int, b: int) -> int:
     """
-    Тестовая функция сложения аргументов.
+    Test function for adding arguments.
     """
     return a + b
 
 
 async def test_run_in_processpool() -> None:
     """
-    Тестируем функцию `run_in_processpool`.
+    Test the `run_in_processpool` function.
     """
     assert process.process_pool is None
     assert await process.run_in_processpool(add, 2, b=3) == 5

@@ -1,5 +1,5 @@
 """
-Модуль запуска тяжелых операций в ProcessPoolExecutor.
+Module for running heavy operations in ProcessPoolExecutor.
 """
 
 import asyncio
@@ -19,9 +19,9 @@ process_pool: ProcessPoolExecutor | None = None
 
 async def run_in_processpool(fn: Callable[P, R], *args: P.args, **kwargs: P.kwargs) -> R:
     """
-    Запуск функции в отдельном процессе.
+    Run a function in a separate process.
 
-    Используем fork в связи с https://github.com/python/cpython/issues/94765.
+    Use fork due to https://github.com/python/cpython/issues/94765.
     """
     global process_pool
     if process_pool is None:

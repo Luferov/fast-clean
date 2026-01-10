@@ -1,3 +1,3 @@
 """
-Пакет, содержащий тесты вспомогательных функций и классов.
+Package containing tests for helper functions and classes.
 """

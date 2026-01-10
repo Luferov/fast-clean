@@ -1,5 +1,5 @@
 """
-Модуль, содержащий модели.
+Module containing models.
 """
 
 import datetime as dt
@@ -11,7 +11,7 @@ from sqlalchemy.sql import func
 
 class CreatedAtMixin:
     """
-    Миксин, содержащий дату и время создания записи.
+    Mixin containing the record creation date and time.
     """
 
     created_at: Mapped[dt.datetime] = mapped_column(
@@ -23,7 +23,7 @@ class CreatedAtMixin:
 
 class UpdatedAtMixin:
     """
-    Миксин, содержащий дату и время обновления записи.
+    Mixin containing the record update date and time.
     """
 
     updated_at: Mapped[dt.datetime] = mapped_column(
@@ -36,5 +36,7 @@ class UpdatedAtMixin:
 
 class TimestampMixin(CreatedAtMixin, UpdatedAtMixin):
     """
-    Миксин, содержащий дату и время создания и обновления записи.
+    Mixin containing the record creation and update date and time.
     """
+
+    ...

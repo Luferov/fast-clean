@@ -1,8 +1,9 @@
 """
-Модуль, содержащий тесты репозиториев настроек.
+Module containing settings repository tests.
 """
 
 import pytest
+
 from fast_clean.repositories.settings import SettingsRepositoryError, SettingsRepositoryProtocol
 
 from .settings import ServiceSettingsSchema, UnknownSettingsSchema
@@ -13,13 +14,13 @@ SERVICE = ServiceSettingsSchema(str_value='value', int_value=1)
 @pytest.mark.parametrize('settings_repository', [('env', SERVICE)], indirect=True)
 class TestSettingsRepositories:
     """
-    Тесты репозиториев настроек.
+    Settings repository tests.
     """
 
     @staticmethod
     async def test_get_without_name(settings_repository: SettingsRepositoryProtocol) -> None:
         """
-        Тестируем метод `get` без имени.
+        Test the `get` method without a name.
         """
         with pytest.raises(SettingsRepositoryError):
             await settings_repository.get(UnknownSettingsSchema)
@@ -28,7 +29,7 @@ class TestSettingsRepositories:
     @staticmethod
     async def test_get_with_name(settings_repository: SettingsRepositoryProtocol) -> None:
         """
-        Тестируем метод `get` с именем.
+        Test the `get` method with a name.
         """
         with pytest.raises(SettingsRepositoryError):
             await settings_repository.get(UnknownSettingsSchema, name='unknown')

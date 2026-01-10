@@ -1,10 +1,12 @@
 """
-Модуль, содержащий фикстуры для тестов сервисов.
+Module containing fixtures for service tests.
 """
 
 from collections.abc import AsyncIterator
 
 import pytest
+from redis import asyncio as aioredis
+
 from fast_clean.db import Base, SessionManagerProtocol, make_async_engine, make_async_session_factory
 from fast_clean.services.cryptography import (
     AesCbcCryptographyService,
@@ -14,15 +16,13 @@ from fast_clean.services.cryptography import (
 from fast_clean.services.lock import LockServiceProtocol, RedisLockService
 from fast_clean.services.seed import SeedService
 from fast_clean.services.transaction import TransactionService
-from redis import asyncio as aioredis
-
 from tests.settings import SettingsSchema
 
 
 @pytest.fixture
 async def cryptography_service(settings: SettingsSchema, request: pytest.FixtureRequest) -> CryptographyServiceProtocol:
     """
-    Получаем репозиторий кеша.
+    Get the cache repository.
     """
     match request.param:
         case 'aes_gcm':
@@ -36,7 +36,7 @@ async def cryptography_service(settings: SettingsSchema, request: pytest.Fixture
 @pytest.fixture
 def lock_service(settings: SettingsSchema) -> LockServiceProtocol:
     """
-    Получаем сервис распределенной блокировки.
+    Get the distributed lock service.
     """
     if not settings.cache.redis:
         pytest.skip('Redis not configured in settings')
@@ -46,7 +46,7 @@ def lock_service(settings: SettingsSchema) -> LockServiceProtocol:
 @pytest.fixture
 async def seed_service(settings: SettingsSchema, session_manager: SessionManagerProtocol) -> AsyncIterator[SeedService]:
     """
-    Получаем сервис для загрузки данных из файлов.
+    Get the service for loading data from files.
     """
     async_engine = make_async_engine(settings.db.dsn)
     async with async_engine.begin() as conn:
@@ -61,7 +61,7 @@ async def seed_service(settings: SettingsSchema, session_manager: SessionManager
 @pytest.fixture
 async def transaction_service(settings: SettingsSchema) -> TransactionService:
     """
-    Получаем сервис транзакций.
+    Get the transaction service.
     """
     async with make_async_session_factory(settings.db.dsn)() as session:
         return TransactionService(session)

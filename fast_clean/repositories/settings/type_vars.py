@@ -1,5 +1,5 @@
 """
-Модуль, содержащий переменные типов.
+Module containing type variables.
 """
 
 from typing import TypeVar

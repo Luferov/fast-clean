@@ -1,3 +1,3 @@
 """
-Приложение для получения состояния и метрик сервера.
+Application for retrieving server status and metrics.
 """

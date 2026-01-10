@@ -1,5 +1,5 @@
 """
-Модуль, содержащий зависимости для тестов.
+Module containing dependencies for tests.
 """
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ from fastapi import Depends
 
 class Session:
     """
-    Тестовая сессия.
+    Test session.
     """
 
     def __init__(self) -> None:
@@ -24,7 +24,7 @@ class Session:
     @asynccontextmanager
     async def begin(self: Self) -> AsyncIterator[Session]:
         """
-        Запускаем сессию.
+        Start a session.
         """
         self.in_transaction = True
         yield self
@@ -36,7 +36,7 @@ class Session:
 
 class RepositoryUnknownProtocol(Protocol):
     """
-    Протокол тестового неизвестного репозитория.
+    Test unknown repository protocol.
     """
 
     ...
@@ -44,7 +44,7 @@ class RepositoryUnknownProtocol(Protocol):
 
 class RepositoryAProtocol(Protocol):
     """
-    Протокол тестового репозитория A.
+    Test repository A protocol.
     """
 
     ...
@@ -52,7 +52,7 @@ class RepositoryAProtocol(Protocol):
 
 class RepositoryAImpl:
     """
-    Реализация тестового репозитория A.
+    Test repository A implementation.
     """
 
     ...
@@ -60,7 +60,7 @@ class RepositoryAImpl:
 
 class RepositoryBProtocol(Protocol):
     """
-    Протокол тестового репозитория B.
+    Test repository B protocol.
     """
 
     ...
@@ -68,7 +68,7 @@ class RepositoryBProtocol(Protocol):
 
 class RepositoryBImpl:
     """
-    Реализация тестового репозитория B.
+    Test repository B implementation.
     """
 
     def __init__(self, session: Session) -> None:
@@ -77,7 +77,7 @@ class RepositoryBImpl:
 
 def get_repository_a() -> RepositoryAProtocol:
     """
-    Получаем тестовый репозиторий A.
+    Get test repository A.
     """
     return RepositoryAImpl()
 
@@ -86,7 +86,7 @@ async def get_repository_b(
     session: Session | None = None,
 ) -> AsyncGenerator[RepositoryBProtocol, None]:
     """
-    Получаем тестовый репозиторий B.
+    Get test repository B.
     """
     session = session or Session()
     async with session.begin() as session:
@@ -101,7 +101,7 @@ RepositoryB = Annotated[RepositoryBProtocol, Depends(get_repository_b)]
 
 class ServiceAProtocol(Protocol):
     """
-    Протокол тестового сервиса A.
+    Test service A protocol.
     """
 
     ...
@@ -109,7 +109,7 @@ class ServiceAProtocol(Protocol):
 
 class ServiceAImpl:
     """
-    Реализация тестового сервиса A.
+    Test service A implementation.
     """
 
     def __init__(self, repository_a: RepositoryAProtocol, repository_b: RepositoryBProtocol) -> None:
@@ -119,7 +119,7 @@ class ServiceAImpl:
 
 class ServiceBProtocol(Protocol):
     """
-    Протокол тестового сервиса B.
+    Test service B protocol.
     """
 
     ...
@@ -127,7 +127,7 @@ class ServiceBProtocol(Protocol):
 
 class ServiceBImpl:
     """
-    Реализация тестового сервиса B.
+    Test service B implementation.
     """
 
     def __init__(
@@ -143,14 +143,14 @@ class ServiceBImpl:
 
 def get_service_a(repository_a: RepositoryA, repository_b: RepositoryB) -> ServiceAProtocol:
     """
-    Получаем тестовый сервис A.
+    Get test service A.
     """
     return ServiceAImpl(repository_a, repository_b)
 
 
 def get_service_b(repository_a: RepositoryA, repository_b: RepositoryB, value: int) -> ServiceBProtocol:
     """
-    Получаем тестовый сервис B.
+    Get test service B.
     """
     return ServiceBImpl(repository_a, repository_b, value)
 
@@ -161,7 +161,7 @@ ServiceB = Annotated[ServiceBProtocol, Depends(get_service_b)]
 
 class UseCaseAProtocol(Protocol):
     """
-    Протокол тестового варианта использования A.
+    Test use case A protocol.
     """
 
     ...
@@ -169,7 +169,7 @@ class UseCaseAProtocol(Protocol):
 
 class UseCaseAImpl:
     """
-    Реализация тестового варианта использования A.
+    Test use case A implementation.
     """
 
     def __init__(self, service_a: ServiceAProtocol, service_b: ServiceBProtocol, value: str) -> None:
@@ -180,7 +180,7 @@ class UseCaseAImpl:
 
 def get_use_case_a(service_a: ServiceA, service_b: ServiceB, value: str) -> UseCaseAProtocol:
     """
-    Получаем тестовый вариант использования A.
+    Get test use case A.
     """
     return UseCaseAImpl(service_a, service_b, value)
 

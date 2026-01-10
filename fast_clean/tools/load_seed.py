@@ -1,5 +1,5 @@
 """
-Модуль, содержащий команды загрузки данных из файлов.
+Module containing commands to load data from files.
 """
 
 from typing import Annotated
@@ -13,10 +13,10 @@ from fast_clean.utils import typer_async
 
 @typer_async
 async def load_seed(
-    path: Annotated[str | None, typer.Argument(help='Путь к директории для загрузки данных.')] = None,
+    path: Annotated[str | None, typer.Argument(help='Path to the directory for loading data.')] = None,
 ) -> None:
     """
-    Загружаем данные из файлов.
+    Load data from files.
     """
     async with get_container() as container:
         seed_service = await container.get(SeedService)
@@ -25,7 +25,7 @@ async def load_seed(
 
 def use_load_seed(app: typer.Typer) -> None:
     """
-    Регистрируем команды загрузки данных из файлов.
+    Register commands to load data from files.
     """
 
     app.command()(load_seed)

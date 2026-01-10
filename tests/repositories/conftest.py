@@ -1,9 +1,7 @@
 """
-Модуль, содержащий фикстуры для тестов репозиториев.
+Module containing fixtures for repository tests.
 """
 
-import asyncio
-import dataclasses
 import io
 import os
 import shutil
@@ -16,12 +14,12 @@ import aiobotocore
 import aiobotocore.session
 import pytest
 import sqlalchemy as sa
-from aiokafka import AIOKafkaConsumer
 from botocore.exceptions import ClientError
+from redis import asyncio as aioredis
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from fast_clean.db import (
-    BaseUUID as Base,
-)
-from fast_clean.db import (
+    Base,
     SessionManagerImpl,
     make_async_engine,
     make_async_session_factory,
@@ -39,9 +37,6 @@ from fast_clean.repositories.storage import (
     S3StorageRepository,
     StorageRepositoryProtocol,
 )
-from redis import asyncio as aioredis
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from tests.settings import SettingsSchema
 
 from .enums import CrudModelTypeEnum
@@ -51,7 +46,7 @@ from .repositories import (
     ModelInMemoryRepository,
     ModelRepositoryProtocol,
 )
-from .schemas import CrudParentModelReadSchema, DirectorySchema, FileSchema, MessageSchema
+from .schemas import CrudParentModelReadSchema, DirectorySchema, FileSchema
 from .settings import ServiceSettingsSchema, SettingsTest
 from .utils import walk_path
 
@@ -61,7 +56,7 @@ async def cache_repository(
     settings: SettingsSchema, request: pytest.FixtureRequest
 ) -> AsyncIterator[CacheRepositoryProtocol]:
     """
-    Получаем репозиторий кеша.
+    Get the cache repository.
     """
     repository_kind, data = request.param
     match repository_kind:
@@ -95,7 +90,7 @@ def make_in_memory_crud_repository(
     models_to_create: list[CrudParentModelReadSchema],
 ) -> Iterator[ModelInMemoryRepository]:
     """
-    Создаем репозиторий для выполнения операций над моделями в памяти.
+    Create a repository for operations on models in memory.
     """
     repository = ModelInMemoryRepository()
     repository.models = {model.id: model for model in models_to_create}
@@ -104,7 +99,7 @@ def make_in_memory_crud_repository(
 
 async def create_models(session: AsyncSession, models_to_create: list[CrudParentModelReadSchema]) -> None:
     """
-    Создаем модели в базе данных.
+    Create models in the database.
     """
     for model_type, models in groupby(sorted(models_to_create, key=lambda k: k.type), lambda k: k.type):
         match model_type:
@@ -129,7 +124,7 @@ async def make_db_crud_repository(
     settings: SettingsSchema, models_to_create: list[CrudParentModelReadSchema]
 ) -> AsyncIterator[ModelDbRepository]:
     """
-    Создаем репозиторий для выполнения операций над моделями в базе данных.
+    Create a repository for operations on models in the database.
     """
     async_engine = make_async_engine(settings.db.dsn)
     async with async_engine.begin() as conn:
@@ -148,7 +143,7 @@ async def crud_repository(
     settings: SettingsSchema, request: pytest.FixtureRequest
 ) -> AsyncIterator[ModelRepositoryProtocol]:
     """
-    Получаем репозиторий для выполнения CRUD операций над моделями.
+    Get the repository for CRUD operations on models.
     """
     repository_kind, models_to_create = request.param
     match repository_kind:
@@ -165,7 +160,7 @@ async def crud_repository(
 @pytest.fixture
 async def settings_repository(request: pytest.FixtureRequest) -> AsyncIterator[SettingsRepositoryProtocol]:
     """
-    Получаем репозиторий настроек.
+    Get the settings repository.
     """
     service: ServiceSettingsSchema
     _, service = request.param
@@ -179,7 +174,7 @@ def make_local_storage_repository(
     settings: SettingsSchema, directory: DirectorySchema
 ) -> Iterator[StorageRepositoryProtocol]:
     """
-    Создаем репозиторий локального файлового хранилища.
+    Create a local file storage repository.
     """
     for path, item in walk_path(directory, settings.storage.dir):
         if isinstance(item, DirectorySchema):
@@ -198,7 +193,7 @@ async def make_s3_storage_repository(
     settings: SettingsSchema, directory: DirectorySchema
 ) -> AsyncIterator[StorageRepositoryProtocol]:
     """
-    Создаем репозиторий хранилища S3.
+    Create an S3 storage repository.
     """
     params = settings.storage.s3
     session = aiobotocore.session.get_session()
@@ -241,7 +236,7 @@ async def storage_repository(
     settings: SettingsSchema, request: pytest.FixtureRequest
 ) -> AsyncIterator[StorageRepositoryProtocol]:
     """
-    Получаем репозиторий файлового хранилища.
+    Get the file storage repository.
     """
     repository_kind, directory = request.param
     match repository_kind:
@@ -253,17 +248,3 @@ async def storage_repository(
                 yield storage
         case _:
             raise NotImplementedError()
-
-
-@asynccontextmanager
-async def consume_kafka_message(settings: SettingsSchema, topic: str) -> AsyncIterator[MessageSchema]:
-    """
-    Потребляем сообщение из Kafka.
-    """
-    consumer = AIOKafkaConsumer(topic, bootstrap_servers=settings.kafka.bootstrap_servers, auto_offset_reset='earliest')
-    await consumer.start()
-    try:
-        message = await asyncio.wait_for(consumer.getone(), timeout=5.0)
-        yield MessageSchema.model_validate(dataclasses.asdict(message))
-    finally:
-        await consumer.stop()

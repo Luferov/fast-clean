@@ -1,9 +1,9 @@
-from fast_clean.schemas.request_response import ResponseSchema
+from fast_clean.schemas.request_response import RequestResponseSchema
 
 
-class StatusOkResponseSchema(ResponseSchema):
+class StatusOkResponseSchema(RequestResponseSchema):
     """
-    Схема успешного ответа.
+    Successful response schema.
     """
 
     status: str = 'ok'

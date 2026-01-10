@@ -1,5 +1,5 @@
 """
-Модуль, содержащий вспомогательные функции для работы с Pydantic.
+Module containing helper functions for working with Pydantic.
 """
 
 import importlib
@@ -10,7 +10,7 @@ from pydantic import BaseModel
 
 def rebuild_schemas(modules: Iterable[str]) -> None:
     """
-    Перестраиваем не полностью объявленные схемы из-за циклических зависимостей.
+    Rebuild partially declared schemas due to cyclic dependencies.
 
     https://docs.pydantic.dev/2.10/concepts/models/#rebuilding-model-schema
     """

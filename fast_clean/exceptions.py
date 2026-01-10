@@ -1,5 +1,5 @@
 """
-Модуль, содержащий исключения.
+Module containing exceptions.
 """
 
 import traceback
@@ -22,7 +22,7 @@ ModelType = TypeVar('ModelType')
 
 class ContainerError(Exception):
     """
-    Ошибка контейнера зависимостей.
+    Dependency container error.
     """
 
     def __init__(self, message: str, *args: object) -> None:
@@ -32,7 +32,7 @@ class ContainerError(Exception):
 
 class LockError(Exception):
     """
-    Ошибка распределенной блокировки.
+    Distributed lock error.
     """
 
     message = 'Errors acquiring or releasing a lock'
@@ -40,58 +40,58 @@ class LockError(Exception):
 
 class BusinessLogicException(Exception, ABC):
     """
-    Базовое исключение бизнес-логики.
+    Base business logic exception.
     """
 
     @property
     def type(self: Self) -> str:
         """
-        Тип ошибки.
+        Error type.
         """
         return snakecase(type(self).__name__.replace('Error', ''))
 
     @property
     @abstractmethod
-    def msg(self: Self) -> str:
+    def message(self: Self) -> str:
         """
-        Сообщение ошибки.
+        Error message.
         """
         ...
 
     def __str__(self: Self) -> str:
-        return self.msg
+        return self.message
 
     def get_schema(self: Self, debug: bool) -> BusinessLogicExceptionSchema:
         """
-        Получаем схему исключения.
+        Get the exception schema.
         """
         return BusinessLogicExceptionSchema(
             type=self.type,
-            msg=self.msg,
+            message=self.message,
             traceback=(''.join(traceback.format_exception(type(self), self, self.__traceback__)) if debug else None),
         )
 
 
 class PermissionDeniedError(BusinessLogicException):
     """
-    Ошибка, возникающая при недостатке прав для выполнения действия.
+    Error raised due to insufficient permissions to perform an action.
     """
 
     @property
-    def msg(self: Self) -> str:
-        return 'Недостаточно прав для выполнения действия'
+    def message(self: Self) -> str:
+        return 'Insufficient permissions to perform the action'
 
 
 class ModelNotFoundError(BusinessLogicException):
     """
-    Ошибка, возникающая при невозможности найти модель.
+    Error raised when a model cannot be found.
     """
 
     def __init__(
         self,
         model: type[ModelType] | str,
         *args: object,
-        model_id: int | uuid.UUID | Iterable[int | uuid.UUID] | None = None,
+        model_id: int | uuid.UUID | str | Iterable[int | uuid.UUID | str] | None = None,
         model_name: str | Iterable[str] | None = None,
         message: str | None = None,
     ) -> None:
@@ -102,34 +102,34 @@ class ModelNotFoundError(BusinessLogicException):
         self.custom_message = message
 
     @property
-    def msg(self: Self) -> str:
+    def message(self: Self) -> str:
         if self.custom_message is not None:
             return self.custom_message
-        msg = f'Не удалось найти модель {self.model if isinstance(self.model, str) else self.model.__name__}'
+        message = f'Could not find model {self.model if isinstance(self.model, str) else self.model.__name__}'
         if self.model_id is not None:
             if isinstance(self.model_id, Iterable):
-                return f'{msg} по идентификаторам: [{", ".join(map(str, self.model_id))}]'
-            return f'{msg} по идентификатору: {self.model_id}'
+                return f'{message} by identifiers: [{", ".join(map(str, self.model_id))}]'
+            return f'{message} by identifier: {self.model_id}'
         if self.model_name is not None:
             if isinstance(self.model_name, Iterable):
-                return f'{msg} по именам: [{", ".join(self.model_name)}]'
-            return f'{msg} по имени: {self.model_name}'
-        return msg
+                return f'{message} by names: [{", ".join(self.model_name)}]'
+            return f'{message} by name: {self.model_name}'
+        return message
 
 
 class ModelAlreadyExistsError(BusinessLogicException):
     """
-    Ошибка, возникающая при попытке создать модель с существующим уникальным полем.
+    Error raised when attempting to create a model with an existing unique field.
     """
 
     def __init__(self, field: str, message: str, *args: object) -> None:
         super().__init__(*args)
         self.field = field
-        self.message = message
+        self.custom_message = message
 
     @property
-    def msg(self: Self) -> str:
-        return self.message
+    def message(self: Self) -> str:
+        return self.custom_message
 
     def get_schema(self: Self, debug: bool) -> BusinessLogicExceptionSchema:
         return ModelAlreadyExistsErrorSchema.model_validate(
@@ -139,7 +139,7 @@ class ModelAlreadyExistsError(BusinessLogicException):
 
 class ModelIntegrityError(BusinessLogicException):
     """
-    Ошибка целостности данных при взаимодействии с моделью.
+    Data integrity error when interacting with a model.
     """
 
     def __init__(self, model: type[ModelType] | str, action: ModelActionEnum, *args: object) -> None:
@@ -148,44 +148,44 @@ class ModelIntegrityError(BusinessLogicException):
         self.action = action
 
     @property
-    def msg(self: Self) -> str:
+    def message(self: Self) -> str:
         """
-        Сообщение ошибки.
+        Error message.
         """
-        msg = 'Ошибка целостности данных'
+        message = 'Data integrity error'
         model_name = self.model if isinstance(self.model, str) else self.model.__name__
         match self.action:
             case ModelActionEnum.INSERT:
-                msg += f' при создании модели {model_name}'
+                message += f' when creating model {model_name}'
             case ModelActionEnum.UPDATE:
-                msg += f' при изменении модели {model_name}'
+                message += f' when updating model {model_name}'
             case ModelActionEnum.UPSERT:
-                msg += f' при создании или изменении модели {model_name}'
+                message += f' when creating or updating model {model_name}'
             case ModelActionEnum.DELETE:
-                msg += f' при удалении модели {model_name}'
-        return msg
+                message += f' when deleting model {model_name}'
+        return message
 
 
 class ValidationError(BusinessLogicException):
     """
-    Ошибка валидации.
+    Validation error.
     """
 
-    def __init__(self, field: str | Sequence[str], message: str, *args: object) -> None:
+    def __init__(self, field: str | Sequence[str], custom_message: str, *args: object) -> None:
         super().__init__(*args)
         self.field = field
-        self.message = message
+        self.custom_message = custom_message
 
     @property
     def fields(self: Self) -> Sequence[str]:
         """
-        Поля ошибки.
+        Error fields.
         """
         return [self.field] if isinstance(self.field, str) else self.field
 
     @property
-    def msg(self: Self) -> str:
-        return self.message
+    def message(self: Self) -> str:
+        return self.custom_message
 
     def get_schema(self: Self, debug: bool) -> BusinessLogicExceptionSchema:
         return ValidationErrorSchema.model_validate(
@@ -198,7 +198,7 @@ class ValidationError(BusinessLogicException):
 
 class SortingFieldNotFoundError(BusinessLogicException):
     """
-    Ошибка, возникающая при невозможности найти поле для сортировки.
+    Error raised when a sorting field cannot be found.
     """
 
     def __init__(self, field: str, *args: object) -> None:
@@ -206,15 +206,15 @@ class SortingFieldNotFoundError(BusinessLogicException):
         self.field = field
 
     @property
-    def msg(self: Self) -> str:
-        return f'Не удалось найти поле для сортировки: {self.field}'
+    def message(self: Self) -> str:
+        return f'Could not find field for sorting: {self.field}'
 
 
 async def business_logic_exception_handler(
     settings: CoreSettingsSchema, request: Request, exception: BusinessLogicException
 ) -> Response:
     """
-    Обработчик базового исключения бизнес-логики.
+    Handler for the base business logic exception.
     """
     return await http_exception_handler(
         request,
@@ -229,7 +229,7 @@ async def permission_denied_error_handler(
     settings: CoreSettingsSchema, request: Request, error: PermissionDeniedError
 ) -> Response:
     """
-    Обработчик ошибки, возникающей при недостатке прав для выполнения действия.
+    Handler for the error raised due to insufficient permissions to perform an action.
     """
     return await http_exception_handler(
         request,
@@ -244,7 +244,7 @@ async def model_not_found_error_handler(
     settings: CoreSettingsSchema, request: Request, error: ModelNotFoundError
 ) -> Response:
     """
-    Обработчик ошибки, возникающей при невозможности найти модель.
+    Handler for the error raised when a model cannot be found.
     """
     return await http_exception_handler(
         request,
@@ -259,8 +259,8 @@ async def model_already_exists_error_handler(
     settings: CoreSettingsSchema, request: Request, error: ModelAlreadyExistsError
 ) -> Response:
     """
-    Обработчик ошибки, возникающей при попытке создать модель с существующим уникальным
-    полем.
+    Handler for the error raised when attempting to create a model with an existing unique
+    field.
     """
     return await http_exception_handler(
         request,
@@ -273,7 +273,7 @@ async def model_already_exists_error_handler(
 
 def use_exceptions_handlers(app: FastAPI, settings: CoreSettingsSchema) -> None:
     """
-    Регистрируем глобальные обработчики исключений.
+    Register global exception handlers.
     """
     app.exception_handler(BusinessLogicException)(partial(business_logic_exception_handler, settings))
     app.exception_handler(PermissionDeniedError)(partial(permission_denied_error_handler, settings))

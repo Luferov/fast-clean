@@ -1,20 +1,21 @@
 """
-Модуль, содержащий тестовые схемы.
+Module containing test schemas.
 """
 
 from __future__ import annotations
 
 from typing import Literal
 
-from fast_clean.schemas import CreateSchema, ReadSchema, UpdateSchema
 from pydantic import BaseModel, ConfigDict
+
+from fast_clean.schemas import CreateSchema, ReadSchema, UpdateSchema
 
 from .enums import CrudModelTypeEnum
 
 
 class CrudParentModelCreateSchema(CreateSchema):
     """
-    Схема для создания родительской тестовой модели.
+    Schema for creating the parent test model.
     """
 
     str_column: str
@@ -24,7 +25,7 @@ class CrudParentModelCreateSchema(CreateSchema):
 
 class CrudParentModelReadSchema(ReadSchema):
     """
-    Схема для чтения родительской тестовой модели.
+    Schema for reading the parent test model.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -36,7 +37,7 @@ class CrudParentModelReadSchema(ReadSchema):
 
 class CrudParentModelUpdateSchema(UpdateSchema):
     """
-    Схема для обновления родительской тестовой модели.
+    Schema for updating the parent test model.
     """
 
     str_column: str | None = None
@@ -45,7 +46,7 @@ class CrudParentModelUpdateSchema(UpdateSchema):
 
 class CrudChildAModelCreateSchema(CrudParentModelCreateSchema):
     """
-    Схема для создания дочерней тестовой модели A.
+    Schema for creating child test model A.
     """
 
     type: Literal[CrudModelTypeEnum.CHILD_A] = CrudModelTypeEnum.CHILD_A
@@ -54,7 +55,7 @@ class CrudChildAModelCreateSchema(CrudParentModelCreateSchema):
 
 class CrudChildAModelReadSchema(CrudParentModelReadSchema):
     """
-    Схема для чтения дочерней тестовой модели A.
+    Schema for reading child test model A.
     """
 
     type: Literal[CrudModelTypeEnum.CHILD_A] = CrudModelTypeEnum.CHILD_A
@@ -63,7 +64,7 @@ class CrudChildAModelReadSchema(CrudParentModelReadSchema):
 
 class CrudChildAModelUpdateSchema(CrudParentModelUpdateSchema):
     """
-    Схема для обновления дочерней тестовой модели A.
+    Schema for updating child test model A.
     """
 
     float_column: float
@@ -71,7 +72,7 @@ class CrudChildAModelUpdateSchema(CrudParentModelUpdateSchema):
 
 class CrudChildBModelCreateSchema(CrudParentModelCreateSchema):
     """
-    Схема для создания дочерней тестовой модели B.
+    Schema for creating child test model B.
     """
 
     type: Literal[CrudModelTypeEnum.CHILD_B] = CrudModelTypeEnum.CHILD_B
@@ -80,7 +81,7 @@ class CrudChildBModelCreateSchema(CrudParentModelCreateSchema):
 
 class CrudChildBModelReadSchema(CrudParentModelReadSchema):
     """
-    Схема для чтения дочерней тестовой модели B.
+    Schema for reading child test model B.
     """
 
     type: Literal[CrudModelTypeEnum.CHILD_B] = CrudModelTypeEnum.CHILD_B
@@ -89,7 +90,7 @@ class CrudChildBModelReadSchema(CrudParentModelReadSchema):
 
 class CrudChildBModelUpdateSchema(CrudParentModelUpdateSchema):
     """
-    Схема для обновления дочерней тестовой модели B.
+    Schema for updating child test model B.
     """
 
     bool_column: bool
@@ -97,7 +98,7 @@ class CrudChildBModelUpdateSchema(CrudParentModelUpdateSchema):
 
 class FileSchema(BaseModel):
     """
-    Схема данных файла.
+    File data schema.
     """
 
     name: str
@@ -106,7 +107,7 @@ class FileSchema(BaseModel):
 
 class DirectorySchema(BaseModel):
     """
-    Схема данных директории.
+    Directory data schema.
     """
 
     name: str
@@ -115,7 +116,7 @@ class DirectorySchema(BaseModel):
 
 class MessageValueSchema(BaseModel):
     """
-    Схема значений сообщения для стриминга.
+    Message values schema for streaming.
     """
 
     str_value: str
@@ -124,7 +125,7 @@ class MessageValueSchema(BaseModel):
 
 class MessageSchema(BaseModel):
     """
-    Схема сообщения, полученного с помощью стриминга.
+    Schema of a message received via streaming.
     """
 
     topic: str

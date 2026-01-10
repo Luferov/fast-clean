@@ -1,5 +1,5 @@
 """
-Модуль, содержащий реализацию сервиса криптографии с использованием алгоритма AES.
+Module containing the cryptography service implementation using the AES algorithm.
 """
 
 import base64
@@ -14,7 +14,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 class AesGcmCryptographyService:
     """
-    Сервис криптографии с использованием алгоритма AES в режиме GCM.
+    Cryptography service using the AES algorithm in GCM mode.
     """
 
     def __init__(self, secret_key: str) -> None:
@@ -23,7 +23,7 @@ class AesGcmCryptographyService:
 
     def encrypt(self: Self, data: str) -> str:
         """
-        Зашифровываем данные.
+        Encrypt data.
         """
         bytes_data = data.encode('utf-8')
         iv = os.urandom(12)
@@ -36,7 +36,7 @@ class AesGcmCryptographyService:
 
     def decrypt(self: Self, encrypted_data: str) -> str:
         """
-        Расшифровываем данные.
+        Decrypt data.
         """
         bytes_encrypted_data = base64.b64decode(encrypted_data)
         iv = bytes_encrypted_data[:12]
@@ -50,7 +50,7 @@ class AesGcmCryptographyService:
     @property
     def key(self: Self) -> bytes:
         """
-        Ключ длиной в 32 байта.
+        Key length is 32 bytes.
         """
         key_bytes = self.secret_key.encode()
         if len(key_bytes) > 32:
@@ -63,10 +63,10 @@ class AesGcmCryptographyService:
 
 class AesCbcCryptographyService:
     """
-    Сервис криптографии с использованием алгоритма AES в режиме CBC.
+    Cryptography service using the AES algorithm in CBC mode.
 
-    Данный класс использует режим CBC без аутентификации и поэтому может быть небезопасным.
-    В будущем данный класс будет удален.
+    This class uses CBC mode without authentication and may be unsafe.
+    This class will be removed in the future.
     https://sonarsource.github.io/rspec/#/rspec/S5542/python
     """
 
@@ -81,7 +81,7 @@ class AesCbcCryptographyService:
 
     def encrypt(self: Self, data: str) -> str:
         """
-        Зашифровываем данные.
+        Encrypt data.
         """
         bytes_data = data.encode(encoding='utf-8')
         iv = os.urandom(16)
@@ -94,7 +94,7 @@ class AesCbcCryptographyService:
 
     def decrypt(self: Self, encrypted_data: str) -> str:
         """
-        Расшифровываем данные.
+        Decrypt data.
         """
         bytes_encrypted_data = base64.b64decode(encrypted_data)
         iv = bytes_encrypted_data[:16]
@@ -109,7 +109,7 @@ class AesCbcCryptographyService:
     @property
     def key(self: Self) -> bytes:
         """
-        Ключ длиной в 32 байта.
+        Key length is 32 bytes.
         """
         key_bytes = self.secret_key.encode()
         if len(key_bytes) > 32:

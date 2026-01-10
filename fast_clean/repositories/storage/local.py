@@ -1,5 +1,5 @@
 """
-Модуль, содержащий репозиторий локального файлового хранилища.
+Module containing the local file storage repository.
 """
 
 import asyncio
@@ -19,7 +19,7 @@ from .schemas import LocalStorageParamsSchema
 
 class LocalStorageRepository:
     """
-    Репозиторий локального файлового хранилища.
+    Local file storage repository.
     """
 
     def __init__(self: Self, params: LocalStorageParamsSchema) -> None:
@@ -30,7 +30,7 @@ class LocalStorageRepository:
 
     async def __aenter__(self: Self) -> Self:
         """
-        Вход в контекст менеджера.
+        Enter the context manager.
         """
         return self
 
@@ -38,14 +38,14 @@ class LocalStorageRepository:
 
     async def exists(self: Self, path: str | Path) -> bool:
         """
-        Проверяем существует ли файл.
+        Check whether the file exists.
         """
         path = self.work_dir / path
         return await aos.path.exists(path)
 
     async def listdir(self: Self, path: str | Path) -> list[str]:
         """
-        Получаем список файлов и директорий в заданной директории.
+        Get a list of files and directories in the specified directory.
         """
         paths: list[str] = []
         for item in await aos.listdir(self.work_dir / path):
@@ -57,21 +57,21 @@ class LocalStorageRepository:
 
     async def is_file(self: Self, path: str | Path) -> bool:
         """
-        Проверяем находится ли файл по пути.
+        Check whether a file exists at the path.
         """
         path = self.work_dir / path
         return await aos.path.isfile(path)
 
     async def is_dir(self: Self, path: str | Path) -> bool:
         """
-        Проверяем находится ли директория по пути.
+        Check whether a directory exists at the path.
         """
         path = self.work_dir / path
         return await aos.path.isdir(path)
 
     async def read(self: Self, path: str | Path) -> bytes:
         """
-        Читаем содержимое файла.
+        Read file contents.
         """
         path = self.work_dir / path
         async with open(path, 'rb') as f:
@@ -80,7 +80,7 @@ class LocalStorageRepository:
     @asynccontextmanager
     async def stream_read(self: Self, path: str | Path) -> AsyncGenerator[StreamReaderProtocol, None]:
         """
-        Читаем содержимое файла в потоковом режиме.
+        Read file contents in streaming mode.
         """
         path = self.work_dir / path
         async with open(path, 'rb') as f:
@@ -94,7 +94,7 @@ class LocalStorageRepository:
 
     async def write(self: Self, path: str | Path, content: str | bytes) -> None:
         """
-        Создаем файл или переписываем существующий.
+        Create a file or overwrite an existing one.
         """
         path = self.work_dir / path
         await aos.makedirs(path.parent, exist_ok=True)
@@ -107,10 +107,11 @@ class LocalStorageRepository:
         stream: StreamReadProtocol,
     ) -> None:
         """
-        Создаем файл или переписываем существующий в потоковом режиме.
+        Create a file or overwrite an existing one in streaming mode.
         """
         part_size = 1024 * 1024
         path = self.work_dir / path
+        await aos.makedirs(path.parent, exist_ok=True)
         is_co_function = asyncio.iscoroutinefunction(stream.read)
         async with open(path, 'wb') as f:
             while chunk := (
@@ -122,7 +123,7 @@ class LocalStorageRepository:
 
     async def delete(self: Self, path: str | Path) -> None:
         """
-        Удаляем файл.
+        Delete a file.
         """
         path = self.work_dir / path
         await aos.remove(path)

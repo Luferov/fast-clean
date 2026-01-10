@@ -13,7 +13,7 @@ __all__ = (
 
 class ProjectInfo(BaseModel):
     """
-    Схема для получения информации о проекте.
+    Schema for retrieving project information.
     """
 
     name: str
@@ -29,6 +29,6 @@ def use_toml(dir: Path) -> dict[str, Any]:
 @lru_cache(maxsize=1)
 def use_toml_info(dir: Path) -> ProjectInfo:
     """
-    Получение версии приложения из pyproject.toml.
+    Get the application version from pyproject.toml.
     """
     return ProjectInfo.model_validate(use_toml(dir)['project'])

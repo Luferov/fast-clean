@@ -1,5 +1,5 @@
 """
-Модуль, содержащий тесты сервиса распределенной блокировки.
+Module containing tests for the distributed lock service.
 """
 
 import asyncio
@@ -7,6 +7,7 @@ import random
 from dataclasses import dataclass
 
 import pytest
+
 from fast_clean.exceptions import LockError
 from fast_clean.services import LockServiceProtocol
 
@@ -14,7 +15,7 @@ from fast_clean.services import LockServiceProtocol
 @dataclass
 class Resource:
     """
-    Блокируемый ресурс.
+    Lockable resource.
     """
 
     is_locked: bool = False
@@ -22,13 +23,13 @@ class Resource:
 
 class TestLockService:
     """
-    Тесты сервиса распределенной блокировки.
+    Tests for the distributed lock service.
     """
 
     @classmethod
     async def test_lock_resource(cls, lock_service: LockServiceProtocol) -> None:
         """
-        Тестируем метод `lock` для блокирования общего ресурса.
+        Test the `lock` method to lock a shared resource.
         """
         resource = Resource()
         await asyncio.gather(*[cls.lock_resource(lock_service, resource) for _ in range(5)])
@@ -36,7 +37,7 @@ class TestLockService:
     @staticmethod
     async def test_lock_timeouts(lock_service: LockServiceProtocol) -> None:
         """
-        Тестируем параметр `timeouts` метода `lock`.
+        Test the `timeouts` parameter of the `lock` method.
         """
         name = 'test_lock_timeouts'
         with pytest.raises(LockError):
@@ -51,7 +52,7 @@ class TestLockService:
     @staticmethod
     async def lock_resource(lock_service: LockServiceProtocol, resource: Resource) -> None:
         """
-        Блокируем и изменяем ресурс.
+        Lock and modify the resource.
         """
         async with lock_service.lock('lock_resource'):
             assert not resource.is_locked

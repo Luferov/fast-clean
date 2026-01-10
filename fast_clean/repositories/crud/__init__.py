@@ -1,7 +1,7 @@
 """
-Пакет, содержащий репозиторий для выполнения CRUD операций над моделями.
+Package containing the repository for CRUD operations on models.
 
-Представлено две реализации:
+Two implementations are provided:
 - InMemory
 - Db
 """
@@ -38,18 +38,18 @@ class CrudRepositoryBaseProtocol(
     ]
 ):
     """
-    Протокол базового репозитория для выполнения CRUD операций над моделями.
+    Base repository protocol for CRUD operations on models.
     """
 
     async def get(self: Self, id: IdTypeContravariant) -> ReadSchemaBaseType:
         """
-        Получаем модель по идентификатору.
+        Get a model by identifier.
         """
         ...
 
     async def get_or_none(self: Self, id: IdTypeContravariant) -> ReadSchemaBaseType | None:
         """
-        Получаем модель или None по идентификатору.
+        Get a model or None by identifier.
         """
         ...
 
@@ -57,13 +57,13 @@ class CrudRepositoryBaseProtocol(
         self: Self, ids: Sequence[IdTypeContravariant], *, exact: bool = False
     ) -> list[ReadSchemaBaseType]:
         """
-        Получаем список моделей по идентификаторам.
+        Get a list of models by identifiers.
         """
         ...
 
     async def get_all(self: Self) -> list[ReadSchemaBaseType]:
         """
-        Получаем все модели.
+        Get all models.
         """
         ...
 
@@ -76,43 +76,43 @@ class CrudRepositoryBaseProtocol(
         sorting: Iterable[str] | None = None,
     ) -> PaginationResultSchema[ReadSchemaBaseType]:
         """
-        Получаем список моделей с пагинацией, поиском и сортировкой.
+        Get a list of models with pagination, search, and sorting.
         """
         ...
 
     async def create(self: Self, create_object: CreateSchemaBaseType) -> ReadSchemaBaseType:
         """
-        Создаем модель.
+        Create a model.
         """
         ...
 
     async def bulk_create(self: Self, create_objects: list[CreateSchemaBaseType]) -> list[ReadSchemaBaseType]:
         """
-        Создаем несколько моделей.
+        Create multiple models.
         """
         ...
 
     async def update(self: Self, update_object: UpdateSchemaBaseType) -> ReadSchemaBaseType:
         """
-        Обновляем модель.
+        Update a model.
         """
         ...
 
     async def bulk_update(self: Self, update_objects: list[UpdateSchemaBaseType]) -> None:
         """
-        Обновляем несколько моделей.
+        Update multiple models.
         """
         ...
 
     async def upsert(self: Self, create_object: CreateSchemaBaseType) -> ReadSchemaBaseType:
         """
-        Создаем или обновляем модель.
+        Create or update a model.
         """
         ...
 
     async def delete(self: Self, ids: Sequence[IdTypeContravariant]) -> None:
         """
-        Удаляем модели.
+        Delete models.
         """
         ...
 
@@ -131,7 +131,7 @@ class CrudRepositoryIntProtocol(
     ],
 ):
     """
-    Протокол репозитория для выполнения CRUD операций над моделями старого типа.
+    Repository protocol for CRUD operations on old-type models.
     """
 
     ...
@@ -142,7 +142,7 @@ class CrudRepositoryProtocol(
     Protocol[ReadSchemaBaseType, CreateSchemaType, UpdateSchemaType],
 ):
     """
-    Протокол репозитория для выполнения CRUD операций над моделями нового типа.
+    Repository protocol for CRUD operations on new-type models.
     """
 
     ...

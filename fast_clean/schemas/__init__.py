@@ -1,7 +1,9 @@
 """
-Пакет, содержащий схемы.
+Package containing schemas.
 """
 
+from .auths import BasicAuthSchema as BasicAuthSchema
+from .auths import BearerTokenAuthSchema as BearerTokenAuthSchema
 from .exceptions import BusinessLogicExceptionSchema as BusinessLogicExceptionSchema
 from .exceptions import ModelAlreadyExistsErrorSchema as ModelAlreadyExistsErrorSchema
 from .exceptions import ValidationErrorSchema as ValidationErrorSchema
@@ -18,7 +20,3 @@ from .repository import ReadSchema as ReadSchema
 from .repository import ReadSchemaInt as ReadSchemaInt
 from .repository import UpdateSchema as UpdateSchema
 from .repository import UpdateSchemaInt as UpdateSchemaInt
-from .request_response import RemoteRequestSchema as RemoteRequestSchema
-from .request_response import RemoteResponseSchema as RemoteResponseSchema
-from .request_response import RequestSchema as RequestSchema
-from .request_response import ResponseSchema as ResponseSchema

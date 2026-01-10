@@ -1,5 +1,5 @@
 """
-Модуль, содержащий вспомогательные функции для работы с Typer.
+Module containing helper functions for working with Typer.
 """
 
 import asyncio
@@ -13,7 +13,7 @@ RetType = TypeVar('RetType')
 
 def typer_async(func: Callable[Param, Coroutine[Any, Any, RetType]]) -> Callable[Param, RetType]:
     """
-    Декоратор для асинхронного запуска Typer.
+    Decorator for running Typer asynchronously.
     """
 
     @wraps(func)

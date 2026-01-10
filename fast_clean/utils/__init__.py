@@ -1,5 +1,5 @@
 """
-Пакет, содержащий вспомогательные функции и классы.
+Package containing helper functions and classes.
 """
 
 from .process import run_in_processpool as run_in_processpool
