@@ -67,7 +67,7 @@ class ContainerManager:
         if additional_providers is not None:
             application_providers.extend(additional_providers)
         container = cls.init(application_providers=application_providers, module_names=module_names)
-        faststream_setup_dishka(container, app)
+        faststream_setup_dishka(container, app)  # type: ignore[arg-type]
         return container
 
     @classmethod
