@@ -49,7 +49,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       minio:
-        image: minio/minio
+        image: lazybit/minio
         env:
           MINIO_ROOT_USER: admin
           MINIO_ROOT_PASSWORD: "12345678"
