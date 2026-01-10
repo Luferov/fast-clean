@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://luferov.github.io/fast-clean/</loc>
+         <lastmod>2026-01-10</lastmod>
+    </url>
+    <url>
+         <loc>https://luferov.github.io/fast-clean/FastAPI/Create%20FastAPI%20Application/</loc>
+         <lastmod>2026-01-10</lastmod>
+    </url>
+    <url>
+         <loc>https://luferov.github.io/fast-clean/FastStream/Create%20FastStream%20Application/</loc>
+         <lastmod>2026-01-10</lastmod>
+    </url>
+    <url>
+         <loc>https://luferov.github.io/fast-clean/Taskiq/Create%20Taskiq%20Application/</loc>
+         <lastmod>2026-01-10</lastmod>
+    </url>
+</urlset>
