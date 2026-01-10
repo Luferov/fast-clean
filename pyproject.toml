@@ -106,7 +106,7 @@ testpaths = "tests"
 
 
 [tool.mypy]
-files = ["tochka_eb_core", "tests"]
+files = ["fast_clean", "tests"]
 disable_error_code = "import-untyped"
 plugins = "pydantic.mypy"
 strict_optional = false
