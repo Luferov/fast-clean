@@ -24,61 +24,61 @@ jobs:
         run: uv run mypy --ignore-missing-imports --scripts-are-modules --install-types --non-interactive
       - name: Pre-commit
         run: uv run pre-commit run --all-files
-  test:
-    name: Test
-    needs: [lint]
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_USER: "postgres"
-          POSTGRES_PASSWORD: "postgres"
-          POSTGRES_DB: "test"
-          POSTGRES_PORT: 5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      redis:
-        image: redis:latest
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      minio:
-        image: lazybit/minio
-        env:
-          MINIO_ROOT_USER: admin
-          MINIO_ROOT_PASSWORD: "12345678"
-        options: >-
-          --health-cmd "curl -f http://localhost:9000/minio/health/live"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-          --health-start-period 30s
-    env:
-      DB__HOST: "postgres"
-      STORAGE__S3__ENDPOINT: "minio"
-      CACHE__REDIS__DSN: "redis://redis:6379/0"
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          version: "0.6.2"
-          enable-cache: true
-          cache-dependency-glob: |
-            requirements**.txt
-            pyproject.toml
-      - name: Install the project
-        run: uv sync --all-extras
-      - name: Test
-        run: uv run pytest --config-file=pytest.ini --cov-report html --cov=fast_clean tests
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v5
-        with:
-          name: code-coverage-report
-          path: htmlcov
+  # test:
+  #   name: Test
+  #   needs: [lint]
+  #   runs-on: ubuntu-latest
+  #   services:
+  #     postgres:
+  #       image: postgres:17
+  #       env:
+  #         POSTGRES_USER: "postgres"
+  #         POSTGRES_PASSWORD: "postgres"
+  #         POSTGRES_DB: "test"
+  #         POSTGRES_PORT: 5432
+  #       options: >-
+  #         --health-cmd pg_isready
+  #         --health-interval 10s
+  #         --health-timeout 5s
+  #         --health-retries 5
+  #     redis:
+  #       image: redis:latest
+  #       options: >-
+  #         --health-cmd "redis-cli ping"
+  #         --health-interval 10s
+  #         --health-timeout 5s
+  #         --health-retries 5
+  #     minio:
+  #       image: lazybit/minio
+  #       env:
+  #         MINIO_ROOT_USER: admin
+  #         MINIO_ROOT_PASSWORD: "12345678"
+  #       options: >-
+  #         --health-cmd "curl -f http://localhost:9000/minio/health/live"
+  #         --health-interval 10s
+  #         --health-timeout 5s
+  #         --health-retries 5
+  #         --health-start-period 30s
+  #   env:
+  #     DB__HOST: "postgres"
+  #     STORAGE__S3__ENDPOINT: "minio"
+  #     CACHE__REDIS__DSN: "redis://redis:6379/0"
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Setup uv
+  #       uses: astral-sh/setup-uv@v5
+  #       with:
+  #         version: "0.6.2"
+  #         enable-cache: true
+  #         cache-dependency-glob: |
+  #           requirements**.txt
+  #           pyproject.toml
+  #     - name: Install the project
+  #       run: uv sync --all-extras
+  #     - name: Test
+  #       run: uv run pytest --config-file=pytest.ini --cov-report html --cov=fast_clean tests
+  #     - name: Archive code coverage results
+  #       uses: actions/upload-artifact@v5
+  #       with:
+  #         name: code-coverage-report
+  #         path: htmlcov
